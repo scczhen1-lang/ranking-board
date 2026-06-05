@@ -63,6 +63,45 @@
     #loader { text-align: center; padding: 4px 0; font-size: 1rem; color: #666; margin-top: 50px; }
     .spinner { animation: spin 1s linear infinite; margin-bottom: 10px; font-size: 2rem; color: var(--primary-color); }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+     /* 既存のスタイルに以下を追加チームのカードをタップ（クリック）すると、その下にスッとスラッシュ区切りで構成員全員のラウンド成績履歴が展開するアコーディオン機能を追加 */
+  .rank-card {
+    display: block; /* 中身を縦並び可能にするため変更 */
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .rank-card:active { background: #f0f0f0; }
+  
+  .card-main-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* タップして開く履歴エリア */
+  .member-history-panel {
+    display: none;
+    margin-block-start: 10px;
+    padding-block-start: 10px;
+    border-block-start: 1px dashed #ddd;
+    font-size: 0.85rem;
+    color: #444;
+    background: #fafafa;
+    border-radius: 4px;
+    padding: 8px;
+  }
+  .member-history-panel.open {
+    display: block;
+  }
+  .history-row {
+    margin-bottom: 4px;
+  }
+  .history-row:last-child { margin-bottom: 0; }
+  .history-round-label {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-right: 5px;
+  }
+  
   </style>
 </head>
 <body>
@@ -131,39 +170,63 @@
 
     // チームランキング生成
     function renderTeamRanking(rankings) {
-      const panel = document.getElementById("team-panel");
-      panel.innerHTML = ""; // 初期化
+  const panel = document.getElementById("team-panel");
+  panel.innerHTML = ""; 
 
-      if(rankings.length === 0) {
-        panel.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>まだチームスコアの記録がありません。</p>";
-        return;
-      }
+  if(rankings.length === 0) {
+    panel.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>まだチームスコアの記録がありません。</p>";
+    return;
+  }
 
-      rankings.forEach(item => {
-        // 各ラウンドの内訳ドットを生成
-        let roundHtml = "";
-        if (item.roundDetails) {
-          Object.keys(item.roundDetails).sort().forEach(rKey => {
-            roundHtml += `<span class="round-dot">${rKey}: ${item.roundDetails[rKey]}点</span>`;
-          });
-        }
-
-        const card = document.createElement("div");
-        card.className = "rank-card";
-        card.innerHTML = `
-          <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
-          <div class="info-box">
-            <div class="name-main">${item.teamName}</div>
-            <div class="sub-detail">チームNo.${item.teamNo}</div>
-            <div class="round-dots">${roundHtml}</div>
-          </div>
-          <div class="score-box">
-            <span class="score-num">${item.totalScore}</span><span class="score-unit">点</span>
-          </div>
-        `;
-        panel.appendChild(card);
+  rankings.forEach((item, index) => {
+    // 1. 各ラウンドの得点ドットの生成
+    let roundHtml = "";
+    if (item.roundDetails) {
+      Object.keys(item.roundDetails).sort().forEach(rKey => {
+        roundHtml += `<span class="round-dot">${rKey}: ${item.roundDetails[rKey]}点</span>`;
       });
     }
+
+    // 2. タップで開く「構成員全員の名前/スコア」の履歴文字列を生成
+    let historyRowsHtml = "";
+    if (item.memberHistory) {
+      Object.keys(item.memberHistory).sort().forEach(rKey => {
+        historyRowsHtml += `
+          <div class="history-row">
+            <span class="history-round-label">[${rKey}]</span> ${item.memberHistory[rKey]}
+          </div>`;
+      });
+    }
+
+    // カード型コンテナの生成
+    const card = document.createElement("div");
+    card.className = "rank-card";
+    // タップしたときにこのチームの履歴パネルだけを開閉するイベントを設定
+    card.onclick = () => {
+      const targetPanel = document.getElementById(`history-${item.teamNo}`);
+      targetPanel.classList.toggle("open");
+    };
+
+    card.innerHTML = `
+      <div class="card-main-content">
+        <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
+        <div class="info-box">
+          <div class="name-main">${item.teamName}</div>
+          <div class="sub-detail">チームNo.${item.teamNo} <span style="color:#aaa;font-size:0.75rem;">(タップで全員の履歴表示)</span></div>
+          <div class="round-dots">${roundHtml}</div>
+        </div>
+        <div class="score-box">
+          <span class="score-num">${item.totalScore}</span><span class="score-unit">点</span>
+        </div>
+      </div>
+      <!-- 隠し履歴パネル -->
+      <div class="member-history-panel" id="history-${item.teamNo}">
+        ${historyRowsHtml || "履歴データがありません。"}
+      </div>
+    `;
+    panel.appendChild(card);
+  });
+}
 
     // 個人ランキング生成
     function renderPlayerRanking(rankings) {
