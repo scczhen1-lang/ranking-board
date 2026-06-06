@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>輪投げ大会 成績ランキング</title>
+  <link rel="apple-touch-icon" href="icon.png"> <!-- iPhone用 -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon.png"> <!-- Android用 -->
+  <meta name="apple-mobile-web-app-title" content="輪投げ大会"> <!-- ホーム画面でのアプリ名 -->
+  <!-- UIを綺麗にするためのアイコンフォント（任意） -->
+  <link rel="stylesheet" href="https://cloudflare.com">
+  <style>
+    /* 全体のデザイン調整 */
+    :root {
+      --primary-color: #00b900; /* LINEカラー */
+      --secondary-color: #333;
+      --bg-color: #f4f6f9;
+      --card-bg: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--secondary-color); padding-bottom: 20px; }
+    
+    /* ヘッダーエリア */
+    header { background: linear-gradient(135deg, var(--primary-color), #009900); color: white; padding: 20px 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    h1 { font-size: 1.4rem; margin-bottom: 5px; }
+    .status-badge { inline-size: max-content; margin: 5px auto; padding: 3px 10px; background: rgba(255,255,255,0.2); border-radius: 15px; font-size: 0.8rem; }
+    .update-time { font-size: 0.75rem; opacity: 0.8; margin-top: 5px; }
+
+    /* タブ切り替えボタン */
+    .tabs { display: flex; background: white; margin: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .tab-btn { flex: 1; padding: 12px; text-align: center; background: none; border: none; font-size: 0.95rem; font-weight: bold; color: #666; cursor: pointer; transition: 0.2s; }
+    .tab-btn.active { background-color: var(--primary-color); color: white; }
+
+    /* メインコンテンツエリア */
+    .container { padding: 0 15px; }
+    .content-panel { display: none; }
+    .content-panel.active { display: block; }
+
+    /* ランキングカードのデザイン（スマホ最適化） */
+    .rank-card { background: var(--card-bg); border-radius: 8px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; align-items: center; }
+    
+    /* 順位バッジ */
+    .rank-num { font-size: 1.3rem; font-weight: bold; inline-size: 40px; text-align: center; margin-right: 15px; color: #888; }
+    .rank-1 { color: #dfac11; font-size: 1.6rem; } /* 金 */
+    .rank-2 { color: #b1b1b1; font-size: 1.5rem; } /* 銀 */
+    .rank-3 { color: #b68553; font-size: 1.4rem; } /* 銅 */
+
+    /* 情報エリア */
+    .info-box { flex: 1; }
+    .name-main { font-size: 1.1rem; font-weight: bold; margin-bottom: 4px; }
+    .sub-detail { font-size: 0.8rem; color: #777; }
+    
+    /* スコア表示 */
+    .score-box { text-align: right; min-inline-size: 70px; }
+    .score-num { font-size: 1.4rem; font-weight: bold; color: var(--primary-color); }
+    .score-unit { font-size: 0.8rem; color: #777; margin-left: 2px; }
+
+    /* 各ラウンド詳細（アコーディオン等に拡張可能、今回はシンプルに文字列化） */
+    .round-dots { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+    .round-dot { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; color: #555; }
+
+    /* ローディング表示 */
+    #loader { text-align: center; padding: 4px 0; font-size: 1rem; color: #666; margin-top: 50px; }
+    .spinner { animation: spin 1s linear infinite; margin-bottom: 10px; font-size: 2rem; color: var(--primary-color); }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+     /* 既存のスタイルに以下を追加チームのカードをタップ（クリック）すると、その下にスッとスラッシュ区切りで構成員全員のラウンド成績履歴が展開するアコーディオン機能を追加 */
+  .rank-card {
+    display: block; /* 中身を縦並び可能にするため変更 */
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .rank-card:active { background: #f0f0f0; }
+  
+  .card-main-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* タップして開く履歴エリア */
+  .member-history-panel {
+    display: none;
+    margin-block-start: 10px;
+    padding-block-start: 10px;
+    border-block-start: 1px dashed #ddd;
+    font-size: 0.85rem;
+    color: #444;
+    background: #fafafa;
+    border-radius: 4px;
+    padding: 8px;
+  }
+  .member-history-panel.open {
+    display: block;
+  }
+  .history-row {
+    margin-bottom: 4px;
+  }
+  .history-row:last-child { margin-bottom: 0; }
+  .history-round-label {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-right: 5px;
+  }
+  
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header>
+    <h1 id="tournament-name">🏆 第11回 砧高協輪投げ大会</h1>
+    <div class="status-badge" id="tournament-status">読み込み中...</div>
+    <div class="update-time" id="last-update">最終更新: --:--:--</div>
+  </header>
+
+  <!-- タブボタン -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('team')"><i class="fas fa-users"></i> チーム順位</button>
+    <button class="tab-btn" onclick="switchTab('player')"><i class="fas fa-user"></i> 個人順位</button>
+  </div>
+
+  <!-- メイン表示エリア -->
+  <div class="container">
+    <!-- ローディング表示 -->
+    <div id="loader">
+      <div class="spinner"><i class="fas fa-circle-notch"></i></div>
+      <p>最新の成績を集計中...</p>
+    </div>
+
+    <!-- チームランキングパネル -->
+    <div id="team-panel" class="content-panel active"></div>
+
+    <!-- 個人ランキングパネル -->
+    <div id="player-panel" class="content-panel"></div>
+  </div>
+
+  <script>
+    // ⚠️ここにGASでデプロイした「ウェブアプリのURL (WEBAPP_URL)」を貼り付けてください
+    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwl-uBmBdjn2GF-w9frE4yjv_x5LXQ5Z-X7-ZmdMb1UmU4NVSHp04xJE4n2UxlzrInsSA/exec"; 
+
+    // データ取得と画面描画
+    async function fetchRankings() {
+      try {
+        const response = await fetch(GAS_WEBAPP_URL);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        // 基本情報の反映
+        document.getElementById("tournament-name").innerText = data.tournamentName;
+        document.getElementById("tournament-status").innerText = `ステータス: ${data.status}`;
+        
+        // 日付を読みやすくフォーマット
+        const date = new Date(data.lastUpdate);
+        document.getElementById("last-update").innerText = `最終更新: ${date.toLocaleTimeString('ja-JP')} (${date.toLocaleDateString('ja-JP')})`;
+
+        // チームランキングの描画
+        renderTeamRanking(data.teamRanking);
+
+        // 個人ランキングの描画
+        renderPlayerRanking(data.playerRanking);
+
+        // ローディングを非表示にする
+        document.getElementById("loader").style.display = "none";
+
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        document.getElementById("loader").innerHTML = "<p style='color:red;'>データの読み込みに失敗しました。<br>電波の良い所で再度お試しください。</p>";
+      }
+    }
+
+    // チームランキング生成
+    function renderTeamRanking(rankings) {
+  const panel = document.getElementById("team-panel");
+  panel.innerHTML = ""; 
+
+  if(rankings.length === 0) {
+    panel.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>まだチームスコアの記録がありません。</p>";
+    return;
+  }
+
+  rankings.forEach((item, index) => {
+    // 1. 各ラウンドの得点ドットの生成
+    let roundHtml = "";
+    if (item.roundDetails) {
+      Object.keys(item.roundDetails).sort().forEach(rKey => {
+        roundHtml += `<span class="round-dot">${rKey}: ${item.roundDetails[rKey]}点</span>`;
+      });
+    }
+
+    // 2. タップで開く「構成員全員の名前/スコア」の履歴文字列を生成
+    let historyRowsHtml = "";
+    if (item.memberHistory) {
+      Object.keys(item.memberHistory).sort().forEach(rKey => {
+        historyRowsHtml += `
+          <div class="history-row">
+            <span class="history-round-label">[${rKey}]</span> ${item.memberHistory[rKey]}
+          </div>`;
+      });
+    }
+
+    // カード型コンテナの生成
+    const card = document.createElement("div");
+    card.className = "rank-card";
+    // タップしたときにこのチームの履歴パネルだけを開閉するイベントを設定
+    card.onclick = () => {
+      const targetPanel = document.getElementById(`history-${item.teamNo}`);
+      targetPanel.classList.toggle("open");
+    };
+
+    card.innerHTML = `
+      <div class="card-main-content">
+        <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
+        <div class="info-box">
+          <div class="name-main">${item.teamName}</div>
+          <div class="sub-detail">チームNo.${item.teamNo} <span style="color:#aaa;font-size:0.75rem;">(タップで全員の履歴表示)</span></div>
+          <div class="round-dots">${roundHtml}</div>
+        </div>
+        <div class="score-box">
+          <span class="score-num">${item.totalScore}</span><span class="score-unit">点</span>
+        </div>
+      </div>
+      <!-- 隠し履歴パネル -->
+      <div class="member-history-panel" id="history-${item.teamNo}">
+        ${historyRowsHtml || "履歴データがありません。"}
+      </div>
+    `;
+    panel.appendChild(card);
+  });
+}
+
+    // 個人ランキング生成
+    function renderPlayerRanking(rankings) {
+      const panel = document.getElementById("player-panel");
+      panel.innerHTML = ""; // 初期化
+
+      if(rankings.length === 0) {
+        panel.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>まだ個人スコアの記録がありません。</p>";
+        return;
+      }
+
+      rankings.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "rank-card";
+        card.innerHTML = `
+          <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
+          <div class="info-box">
+            <div class="name-main">${item.playerName}</div>
+            <div class="sub-detail">${item.teamName} (${item.gameCount}試合出場)</div>
+          </div>
+          <div class="score-box">
+            <span class="score-num">${item.totalScore}</span><span class="score-unit">点</span>
+          </div>
+        `;
+        panel.appendChild(card);
+      });
+    }
+
+    // 順位に応じた装飾クラスを返す
+    function getRankClass(rank) {
+      if (rank === 1) return "rank-1";
+      if (rank === 2) return "rank-2";
+      if (rank === 3) return "rank-3";
+      return "";
+    }
+
+    // 1〜3位は王冠アイコン、それ以外は数字にする
+    function getRankFormat(rank) {
+      if (rank === 1) return '<i class="fas fa-crown"></i>';
+      if (rank === 2) return '<i class="fas fa-medal"></i>';
+      if (rank === 3) return '<i class="fas fa-medal"></i>';
+      return rank;
+    }
+
+    // タブ切り替えロジック
+    function switchTab(type) {
+      // ボタンのactive切り替え
+      const buttons = document.querySelectorAll(".tab-btn");
+      buttons[0].classList.toggle("active", type === 'team');
+      buttons[1].classList.toggle("active", type === 'player');
+
+      // パネルの表示切り替え
+      document.getElementById("team-panel").classList.toggle("active", type === 'team');
+      document.getElementById("player-panel").classList.toggle("active", type === 'player');
+    }
+
+    // ページ読み込み時に自動でGASへデータを取りに行く
+    window.onload = fetchRankings;
+  </script>
+</body>
+</html>
