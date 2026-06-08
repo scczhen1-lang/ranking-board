@@ -61,121 +61,209 @@
 </head>
 <body>
 
-  <header>
+   <header>
     <h1 id="tournament-name">🏆 第11回 砧高協輪投げ大会</h1>
-    <div class="status-badge" id="tournament-status">集計中...</div>
-    <div class="update-time" id="last-update">最終更新: --:--:--</div>
+    <div class="status-badge" id="tournament-status">読み込み中...</div>
+    <div class="update-time" id="last-update">最終更新: ----/--/-- --:--:--</div>
   </header>
 
+  <!-- タブ切り替えボタン -->
   <div class="tabs">
-    <button id="btn-team" class="tab-btn active" onclick="switchTab('team')"><i class="fas fa-users"></i> チーム順位</button>
-    <button id="btn-player" class="tab-btn" onclick="switchTab('player')"><i class="fas fa-user"></i> 個人順位</button>
+    <button class="tab-btn active" id="tab-team">チーム順位</button>
+    <button class="tab-btn" id="tab-player">個人順位</button>
   </div>
 
   <div class="container">
-    <div id="loader"><div class="spinner"><i class="fas fa-circle-notch"></i></div><p>最新の成績を読込中...</p></div>
+    <!-- ローディング表示（初期状態） -->
+    <div id="loader">
+      <div class="spinner">🌀</div>
+      <p>最新の成績を爆速で集計中...</p>
+    </div>
+
+    <!-- チーム用パネル -->
     <div id="team-panel" class="content-panel active"></div>
+
+    <!-- 個人用パネル -->
     <div id="player-panel" class="content-panel"></div>
   </div>
 
+  <!-- LIFF動作用のLINE公式SDKを読み込み -->
+  <script src="https://line-scdn.net"></script>
+  
   <script>
-    // ⚠️ここにあなたのGASのWebアプリURLを貼り付けてください
-    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwl-uBmBdjn2GF-w9frE4yjv_x5LXQ5Z-X7-ZmdMb1UmU4NVSHp04xJE4n2UxlzrInsSA/exec"; 
+    // ==========================================
+    // 2. グローバル設定と変数管理
+    // ==========================================
+    // デプロイしたGASの新しいウェブアプリURLをここに設定してください
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwl-uBmBdjn2GF-w9frE4yjv_x5LXQ5Z-X7-ZmdMb1UmU4NVSHp04xJE4n2UxlzrInsSA/exec"; 
+    const LIFF_ID = "2010124743-2q52f1la"; // LINE DevelopersのLIFF ID
 
-    async function fetchRankings() {
-      try {
-        const response = await fetch(GAS_WEBAPP_URL);
-        const data = await response.json();
+    let currentTab = "team";
+    let cachedData = null;
 
-        document.getElementById("tournament-name").innerText = data.tournamentName;
-        document.getElementById("tournament-status").innerText = `ステータス: ${data.status}`;
-        const date = new Date(data.lastUpdate);
-        document.getElementById("last-update").innerText = `最終更新: ${date.toLocaleTimeString('ja-JP')} (${date.toLocaleDateString('ja-JP')})`;
+    /**
+     * タブ切り替え制御
+     */
+    function switchTab(tabType) {
+      currentTab = tabType;
+      
+      const btnTeam = document.getElementById("tab-team");
+      const btnPlayer = document.getElementById("tab-player");
+      const panelTeam = document.getElementById("team-panel");
+      const panelPlayer = document.getElementById("player-panel");
 
-        renderTeamRanking(data.teamRanking);
-        renderPlayerRanking(data.playerRanking);
-        document.getElementById("loader").style.display = "none";
-      } catch (error) {
-        document.getElementById("loader").innerHTML = "<p style='color:red;'>データの読み込みに失敗しました。</p>";
+      if (tabType === "team") {
+        btnTeam.classList.add("active");
+        btnPlayer.classList.remove("active");
+        panelTeam.classList.add("active");
+        panelPlayer.classList.remove("active");
+      } else {
+        btnTeam.classList.remove("active");
+        btnPlayer.classList.add("active");
+        panelTeam.classList.remove("active");
+        panelPlayer.classList.add("active");
+      }
+      
+      // キャッシュデータがあれば再描画
+      if (cachedData) {
+        renderData(cachedData);
       }
     }
 
+    /**
+     * GASのdoGetから最新ランキングデータを爆速取得
+     */
+    async function fetchLatestRankings() {
+      const loader = document.getElementById("loader");
+      loader.style.display = "block";
+
+      try {
+        // GAS側でCache-Controlを入れていますが、ブラウザの強固なキャッシュを
+        // 回避するためタイムスタンプ（ts）をURLパラメータに付与して完全リアルタイム化
+        const response = await fetch(`${GAS_API_URL}?ts=${Date.now()}`);
+        if (!response.ok) throw new Error("ネットワーク応答が正常ではありません。");
+        
+        const data = await response.json();
+        cachedData = data; // グローバルに保存
+
+        // ヘッダー情報の更新
+        document.getElementById("tournament-name").innerText = data.tournamentName || "輪投げ大会";
+        document.getElementById("tournament-status").innerText = data.status || "進行中";
+        
+        if (data.lastUpdate) {
+          const date = new Date(data.lastUpdate);
+          document.getElementById("last-update").innerText = `最終更新: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+        }
+
+        // データのレンダリング
+        renderData(data);
+
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        document.getElementById("loader").innerHTML = `<p style="color:red; padding:20px;">⚠️データの取得に失敗しました。<br>${error.message}</p>`;
+      } finally {
+        loader.style.display = "none";
+      }
+    }
+
+    /**
+     * チーム別・個人別の描画関数へ分岐
+     */
+    function renderData(data) {
+      if (currentTab === "team") {
+        renderTeamRanking(data.teamRankings || []);
+      } else {
+        // 前回のユーザー様提示コード（renderPlayerRanking）へ受け渡す
+        renderPlayerRanking(data.playerRankings || []);
+      }
+    }
+
+        /**
+     * チーム別ランキングのレンダリング（スラッシュ区切り・コンパクト最適化版）
+     */
     function renderTeamRanking(rankings) {
       const panel = document.getElementById("team-panel");
       panel.innerHTML = "";
 
-      if(rankings.length === 0) {
+      if (rankings.length === 0) {
         panel.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>記録がありません。</p>";
         return;
       }
 
       rankings.forEach(item => {
-        // ⑤ 棒グラフのセグメントHTML生成
-        let barSegmentsHtml = "";
-        if (item.roundDetails && item.totalScore > 0) {
-          Object.keys(item.roundDetails).sort().forEach((rKey, idx) => {
-            const score = item.roundDetails[rKey];
-            const percent = (score / item.totalScore) * 100;
-            const colorClass = (idx < 4) ? `r-color-${idx + 1}` : "r-color-default";
-            if (score > 0) {
-              barSegmentsHtml += `<div class="bar-segment ${colorClass}" style="width: ${percent}%" title="${rKey}: ${score}点">${score}</div>`;
-            }
-          });
-        }
-
-        // ④ 各自の履歴をスラッシュ（/）区切りで表示
-        let historyRowsHtml = "";
-        if (item.memberHistory) {
-          Object.keys(item.memberHistory).sort().forEach(rKey => {
-            historyRowsHtml += `
-              <div class="history-row">
-                <span class="history-round-label">[${rKey}]</span> ${item.memberHistory[rKey]}
-              </div>`;
-          });
-        }
-
         const card = document.createElement("div");
         card.className = "rank-card";
-        card.onclick = () => {
-          document.getElementById(`history-${item.teamNo}`).classList.toggle("open");
-        };
-
-        // ③ チームの合計履歴もスラッシュ区切りでテキスト化
-        const teamHistoryArray = [];
-        if (item.roundDetails) {
-          Object.keys(item.roundDetails).sort().forEach(rKey => {
-            teamHistoryArray.push(`${rKey}:${item.roundDetails[rKey]}点`);
-          });
+        
+        // ⑤ 横棒積上げグラフのセグメントHTMLの組み立て
+        let barSegmentsHtml = "";
+        const maxRound = cachedData ? cachedData.maxRound : 4;
+        
+        for (let r = 1; r <= maxRound; r++) {
+          const rScore = item.roundDetails[`R${r}`] || 0;
+          if (rScore > 0 && item.totalScore > 0) {
+            const percent = (rScore / item.totalScore) * 100;
+            const colorClass = r === 1 ? 'r-color-1' : r === 2 ? 'r-color-2' : r === 3 ? 'r-color-3' : r === 4 ? 'r-color-4' : 'r-color-default';
+            barSegmentsHtml += `<div class="bar-segment ${colorClass}" style="inline-size: ${percent}%" title="R${r}: ${rScore}点">R${r}:${rScore}</div>`;
+          }
         }
-        const teamHistoryStr = teamHistoryArray.join(" / ");
 
+        // 💡【修正の核心】④ 詳細アコーディオンの中身を「/」区切りの1行テキストに成形
+        // 例: "R1: 選手A(5)/選手B(10)... / R2: 選手A(8)..." という形、またはラウンド合計のスマートな羅列に最適化できます
+        const historyLabels = [];
+        Object.keys(item.memberHistory).sort().forEach(rKey => {
+          // 「R1: メンバー内訳」の塊をストック
+          historyLabels.push(`<span class="history-round-label">${rKey}:</span> ${item.memberHistory[rKey]}`);
+        });
+        
+        // 塊同士をさらに「 / 」で繋いで、スクロール不要な1つの横長ラインにする
+        const compactHistoryHtml = historyLabels.length > 0 
+          ? `<div style="line-height: 1.5;">${historyLabels.join(' <span style="color:#ccc; margin:0 8px;">/</span> ')}</div>`
+          : "<div>履歴データがありません。</div>";
+
+        // カード全体のHTML構成
         card.innerHTML = `
           <div class="card-main-content">
             <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
             <div class="info-box">
-              <div class="name-main">${item.teamName}</div>
-              <div class="sub-detail">履歴: ${teamHistoryStr || "なし"}</div>
-              <!-- ⑤ 積上げグラフ表示 -->
-              <div class="stacked-bar-container">${barSegmentsHtml || '<div style="color:#aaa;padding-left:5px;font-size:0.7rem;">スコア未入力</div>'}</div>
+              <div class="name-main">チーム No.${item.teamNo}</div>
+              <div class="sub-detail">${item.teamName}</div>
             </div>
             <div class="score-box">
               <span class="score-num">${item.totalScore}</span><span class="score-unit">点</span>
             </div>
           </div>
+          
+          <!-- ⑤ 爆速積上げグラフ -->
+          <div class="stacked-bar-container">
+            ${barSegmentsHtml || '<div style="color:#bbb; font-size:0.7rem; padding-left:5px;">未投球</div>'}
+          </div>
+
+          <!-- ④ 詳細アコーディオンパネル（「/」区切りでスッキリ表示） -->
           <div class="member-history-panel" id="history-${item.teamNo}">
-            <div style="font-weight:bold; margin-bottom:5px; color:#555;"><i class="fas fa-id-card"></i> 各ラウンドの選手投球順と成績</div>
-            ${historyRowsHtml || "履歴データがありません。"}
+            ${compactHistoryHtml}
           </div>
         `;
+
+        // タップ開閉イベント
+        card.addEventListener("click", () => {
+          const detailPanel = card.querySelector(".member-history-panel");
+          if (detailPanel) {
+            detailPanel.classList.toggle("open");
+          }
+        });
+
         panel.appendChild(card);
       });
     }
 
+        /**
+     * 個人別ランキングのレンダリング
+     */
     function renderPlayerRanking(rankings) {
       const panel = document.getElementById("player-panel");
       panel.innerHTML = "";
 
-      if(rankings.length === 0) {
+      if (rankings.length === 0) {
         panel.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>記録がありません。</p>";
         return;
       }
@@ -190,7 +278,7 @@
             <div class="info-box">
               <div class="name-main">${item.playerName}</div>
               <!-- ③ 個人成績履歴をスラッシュ（/）区切りで表示 -->
-              <div class="sub-detail">${item.teamName} / 履歴: ${item.historyStr} (${item.gameCount}試合)</div>
+              <div class="sub-detail">${item.teamName} / 履歴: ${item.historyStr || "なし"} (${item.gameCount || 0}試合)</div>
             </div>
             <div class="score-box">
               <span class="score-num">${item.totalScore}</span><span class="score-unit">点</span>
@@ -201,8 +289,9 @@
       });
     }
 
-        }
-
+    /**
+     * 順位に応じたCSSクラスの付与
+     */
     function getRankClass(rank) {
       if (rank === 1) return "rank-1"; 
       if (rank === 2) return "rank-2"; 
@@ -225,7 +314,7 @@
     // ==========================================
 
     /**
-     * GASのWebアプリ（URL）から最新の集計データを取得
+     * GASのWebアプリ（URL）から最新の集計データを取得（爆速・キャッシュ回避版）
      */
     async function fetchRankingData() {
       showLoading(true);
@@ -236,17 +325,25 @@
         
         const data = await response.json();
         
-        // グローバル変数にキャッシュ
-        currentRankings = data;
+        // グローバル変数にキャッシュを同期
+        cachedData = data;
 
-        // 現在選択されているタブに応じてレンダリング
+        // ヘッダー情報のリアルタイム更新
+        if (data.tournamentName) document.getElementById("tournament-name").innerText = data.tournamentName;
+        if (data.status) document.getElementById("tournament-status").innerText = data.status;
+        if (data.lastUpdate) {
+          const date = new Date(data.lastUpdate);
+          document.getElementById("last-update").innerText = `最終更新: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+        }
+
+        // 現在選択されているタブに応じて即時レンダリング
         if (currentTab === "team") {
           renderTeamRanking(data.teamRankings || []);
         } else {
           renderPlayerRanking(data.playerRankings || []);
         }
       } catch (error) {
-        console.error(error);
+        console.error("Data Fetch Error:", error);
         alert("データ同期エラー: 最新の成績を取得できませんでした。");
       } finally {
         showLoading(false);
@@ -254,11 +351,13 @@
     }
 
     /**
-     * ローディングインジケーターの表示制御
+     * ローディングインジケーターの表示制御（前半HTMLの要素ID「loader」に完全最適化）
      */
     function showLoading(show) {
-      const spinner = document.getElementById("loading-spinner");
-      if (spinner) spinner.style.display = show ? "flex" : "none";
+      const spinner = document.getElementById("loader");
+      if (spinner) {
+        spinner.style.display = show ? "block" : "none";
+      }
     }
 
     // ==========================================
@@ -284,11 +383,12 @@
       }
 
       // 二重送信防止
-      submitBtn.disabled = true;
-      submitBtn.innerText = "送信中...";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = "送信中...";
+      }
 
       // GASのWebHookまたはLINEトーク送信用のテキストを生成
-      // （※LIFF内送信の場合、GAS側でこのテキストをパースする）
       const messageText = [
         "【輪投げ成績登録】",
         `チーム:${teamName}`,
@@ -298,8 +398,8 @@
       ].join("\n");
 
       try {
-        if (liff.isInClient()) {
-          // ① LINEアプリ内の場合はトークルームにメッセージとして送信
+        if (typeof liff !== 'undefined' && liff.isInClient()) {
+          // ① LINEアプリ内の場合はトークルームにメッセージとして爆速送信
           await liff.sendMessages([{ type: "text", text: messageText }]);
           alert("成績を送信しました！");
           liff.closeWindow(); // 送信後、自動でLIFFを閉じる
@@ -318,14 +418,16 @@
           
           alert("成績を登録しました（ブラウザ経由）");
           closeRegisterModal();
-          fetchRankingData(); // ランキングを再読み込み
+          fetchRankingData(); // ランキングを即座に再読み込み
         }
       } catch (error) {
-        console.error(error);
+        console.error("Submit Error:", error);
         alert(`エラーが発生しました: ${error.message}`);
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "成績を登録する";
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = "成績を登録する";
+        }
       }
     }
 
@@ -334,14 +436,18 @@
     // ==========================================
 
     function openRegisterModal() {
-      document.getElementById("register-modal").classList.add("active");
+      const modal = document.getElementById("register-modal");
+      if (modal) modal.classList.add("active");
       document.body.style.overflow = "hidden"; // 背景スクロール禁止
     }
 
     function closeRegisterModal() {
-      document.getElementById("register-modal").classList.remove("active");
+      const modal = document.getElementById("register-modal");
+      if (modal) modal.classList.remove("active");
       document.body.style.overflow = "";
-      document.getElementById("score-form").reset(); // 入力値クリア
+      
+      const form = document.getElementById("score-form");
+      if (form) form.reset(); // 入力値クリア
     }
 
     // ==========================================
@@ -349,28 +455,38 @@
     // ==========================================
 
     async function initApp() {
-      // 1. UIイベントリスナーの登録
+      // 1. UIイベントリスナーの条件付き安全登録
       document.getElementById("tab-team").addEventListener("click", () => switchTab("team"));
       document.getElementById("tab-player").addEventListener("click", () => switchTab("player"));
-      document.getElementById("btn-open-modal").addEventListener("click", openRegisterModal);
-      document.getElementById("btn-close-modal").addEventListener("click", closeRegisterModal);
-      document.getElementById("score-form").addEventListener("submit", handleFormSubmit);
-      document.getElementById("btn-refresh").addEventListener("click", fetchRankingData);
+      
+      const btnOpen = document.getElementById("btn-open-modal");
+      if (btnOpen) btnOpen.addEventListener("click", openRegisterModal);
+      
+      const btnClose = document.getElementById("btn-close-modal");
+      if (btnClose) btnClose.addEventListener("click", closeRegisterModal);
+      
+      const form = document.getElementById("score-form");
+      if (form) form.addEventListener("submit", handleFormSubmit);
+      
+      const btnRefresh = document.getElementById("btn-refresh");
+      if (btnRefresh) btnRefresh.addEventListener("click", fetchRankingData);
 
       // 2. LIFFの初期化
-      try {
-        await liff.init({ liffId: LIFF_ID });
-        
-        // LINE環境下で未ログインならログインを促す
-        if (!liff.isLoggedIn() && liff.isInClient()) {
-          liff.login();
-          return;
+      if (typeof liff !== 'undefined') {
+        try {
+          await liff.init({ liffId: LIFF_ID });
+          
+          // LINE環境下で未ログインならログインを促す
+          if (!liff.isLoggedIn() && liff.isInClient()) {
+            liff.login();
+            return;
+          }
+        } catch (error) {
+          console.warn("LIFFの初期化に失敗しました（通常ブラウザ環境として動作します）:", error);
         }
-      } catch (error) {
-        console.warn("LIFFの初期化に失敗しました（通常ブラウザ環境として動作します）:", error);
       }
 
-      // 3. 初期データの読み込み
+      // 3. 初期データの読み込み（爆速呼び出し）
       fetchRankingData();
     }
 
