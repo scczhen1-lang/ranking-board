@@ -4,36 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>輪投げ大会</title>
-  <link rel="apple-touch-icon" href="icon.png?v=2"> 
-  <link rel="icon" type="image/png" sizes="192x192" href="icon.png?v=2"> 
+  <link rel="apple-touch-icon" href="icon.png?v=3"> 
+  <link rel="icon" type="image/png" sizes="192x192" href="icon.png?v=3"> 
   <meta name="apple-mobile-web-app-title" content="輪投げ大会"> 
   <style>
     :root { --primary-color: #00b900; --secondary-color: #333; --bg-color: #f4f6f9; --card-bg: #fff; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
     body { background-color: var(--bg-color); color: var(--secondary-color); padding-bottom: 30px; }
-    header { background: linear-gradient(135deg, var(--primary-color), #009900); color: white; padding: 20px 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
-    h1 { font-size: 1.4rem; margin-bottom: 5px; }
-    .status-badge { inline-size: max-content; margin: 5px auto; padding: 3px 10px; background: rgba(255,255,255,0.2); border-radius: 15px; font-size: 0.8rem; }
-    .update-time { font-size: 0.75rem; opacity: 0.8; margin-top: 5px; }
     
-       /* 🔄 更新ボタン（タイトルの下に一回り下げて配置） */
+    /* ヘッダー：高さを抑えてコンパクトに */
+    header { background: linear-gradient(135deg, var(--primary-color), #009900); color: white; padding: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    h1 { font-size: 1.3rem; margin-bottom: 0px; }
+    
+    /* 🔄 更新ボタン（タイトルの下に程よいサイズで配置） */
     .header-btn { 
       display: inline-block;
-      margin-top: 10px;        /* タイトルとの間に程よい隙間を作る */
+      margin-top: 8px;
       background: rgba(255,255,255,0.2); 
-      border: 1px solid rgba(255,255,255,0.4); /* ボタンらしく枠線を追加 */
+      border: 1px solid rgba(255,255,255,0.4);
       color: white; 
-      padding: 6px 16px;       /* 押しやすいように横幅を少し広げる */
-      border-radius: 20px;     /* 丸みを持たせてモダンなデザインに */
-      font-size: 0.85rem; 
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem; 
       font-weight: bold; 
       cursor: pointer; 
       transition: background 0.2s;
     }
-    .header-btn:active { 
-      background: rgba(255,255,255,0.4); 
-    }
+    .header-btn:active { background: rgba(255,255,255,0.4); }
 
+    /* 🏷️ タブボタン：画面横いっぱいに100%広がる元のサイズに強制修正 */
+    .tabs { display: flex; background: white; margin: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); width: calc(100% - 30px) !important; }
+    .tab-btn { flex: 1 !important; width: 50% !important; padding: 14px 10px !important; text-align: center; background: none; border: none; font-size: 1rem !important; font-weight: bold; color: #666; cursor: pointer; display: block !important; }
+    .tab-btn.active { background-color: var(--primary-color) !important; color: white !important; }
+    
+    .container { padding: 0 15px; }
+    .content-panel { display: none; }
+    .content-panel.active { display: block; }
     
     /* カードデザイン */
     .rank-card { background: var(--card-bg); border-radius: 8px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
@@ -58,7 +64,7 @@
     .r-color-4 { background-color: #ef4444; } 
     .r-color-default { background-color: #8b5cf6; }
 
-    /* ④ 詳細パネル（「/」区切りの横1行用） */
+    /* ④ 詳細パネル */
     .member-history-panel { display: none; margin-block-start: 10px; padding: 10px; border-block-start: 1px dashed #ddd; font-size: 0.85rem; color: #444; background: #fafafa; border-radius: 4px; }
     .member-history-panel.open { display: block; }
     .history-round-label { font-weight: bold; color: var(--primary-color); }
@@ -71,10 +77,9 @@
 </head>
 <body>
 
+  <!-- ステータスと最終更新を削除し、タイトル＋ボタンのみに凝縮 -->
   <header>
     <h1 id="tournament-name">🏆 第11回 砧高協輪投げ大会</h1>
-    <div class="status-badge" id="tournament-status">読み込み中...</div>
-    <div class="update-time" id="last-update">最終更新: ----/--/-- --:--:--</div>
     <button class="header-btn" id="btn-refresh">🔄 更新</button>
   </header>
 
@@ -93,14 +98,14 @@
     <div id="player-panel" class="content-panel"></div>
   </div>
 
-  <!-- LINE LIFF SDK -->
   <script src="https://line-scdn.net"></script>
   <script>
-    // ==========================================
+
+        // ==========================================
     // 設定値の同期（★必ずご自身のURL・IDに書き換えてください）
     // ==========================================
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwl-uBmBdjn2GF-w9frE4yjv_x5LXQ5Z-X7-ZmdMb1UmU4NVSHp04xJE4n2UxlzrInsSA/exec"; 
-    const LIFF_ID = "2010124743-2q52f1la"; // LINE DevelopersのLIFF ID
+    const LIFF_ID = "2010124743-2q52f1la"; 
 
     let currentTab = "team";
     let cachedData = null;
@@ -132,7 +137,7 @@
     }
 
     /**
-     * GASのdoGetから最新データを爆速取得（キャッシュ回避版）
+     * GASのdoGetから最新データを爆速取得
      */
     async function fetchRankingData() {
       showLoading(true);
@@ -143,12 +148,10 @@
         const data = await response.json();
         cachedData = data;
 
-        // ヘッダーリアルタイム更新
-        if (data.tournamentName) document.getElementById("tournament-name").innerText = data.tournamentName;
-        if (data.status) document.getElementById("tournament-status").innerText = data.status;
-        if (data.lastUpdate) {
-          const date = new Date(data.lastUpdate);
-          document.getElementById("last-update").innerText = `最終更新: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+        // 💡【安全対策】削除した要素（ステータスや最終更新）の更新命令を完全排除
+        // タイトルのみ安全に書き換えます
+        if (data.tournamentName) {
+          document.getElementById("tournament-name").innerText = data.tournamentName;
         }
 
         renderData(data);
@@ -233,7 +236,6 @@
           </div>
         `;
 
-        // タップしたときに詳細パネルを開閉
         card.addEventListener("click", () => {
           const detailPanel = card.querySelector(".member-history-panel");
           if (detailPanel) detailPanel.classList.toggle("open");
@@ -242,7 +244,8 @@
         panel.appendChild(card);
       });
     }
-    /**
+
+        /**
      * 個人別ランキングのレンダリング
      */
     function renderPlayerRanking(rankings) {
