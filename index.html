@@ -201,5 +201,181 @@
       });
     }
 
+        }
+
     function getRankClass(rank) {
-      if (rank === 1) return "rank-1"; if (rank === 2) return "rank-2"; if (rank === 3) return "rank-3"; return "";
+      if (rank === 1) return "rank-1"; 
+      if (rank === 2) return "rank-2"; 
+      if (rank === 3) return "rank-3"; 
+      return "";
+    }
+
+    /**
+     * 順位の表示フォーマット（1〜3位はメダル風、4位以降は「位」付与）
+     */
+    function getRankFormat(rank) {
+      if (rank === 1) return "🥇";
+      if (rank === 2) return "🥈";
+      if (rank === 3) return "🥉";
+      return `${rank}位`;
+    }
+
+    // ==========================================
+    // 3. データ取得・GAS連携ロジック
+    // ==========================================
+
+    /**
+     * GASのWebアプリ（URL）から最新の集計データを取得
+     */
+    async function fetchRankingData() {
+      showLoading(true);
+      try {
+        // GASからJSONデータを取得（キャッシュ回避のためタイムスタンプを付与）
+        const response = await fetch(`${GAS_API_URL}?ts=${Date.now()}`);
+        if (!response.ok) throw new Error("データの取得に失敗しました");
+        
+        const data = await response.json();
+        
+        // グローバル変数にキャッシュ
+        currentRankings = data;
+
+        // 現在選択されているタブに応じてレンダリング
+        if (currentTab === "team") {
+          renderTeamRanking(data.teamRankings || []);
+        } else {
+          renderPlayerRanking(data.playerRankings || []);
+        }
+      } catch (error) {
+        console.error(error);
+        alert("データ同期エラー: 最新の成績を取得できませんでした。");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    /**
+     * ローディングインジケーターの表示制御
+     */
+    function showLoading(show) {
+      const spinner = document.getElementById("loading-spinner");
+      if (spinner) spinner.style.display = show ? "flex" : "none";
+    }
+
+    // ==========================================
+    // 4. スコア登録（フォーム送信）処理
+    // ==========================================
+
+    /**
+     * 入力フォームのバリデーションと送信
+     */
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+      
+      const submitBtn = document.getElementById("submit-btn");
+      const teamName = document.getElementById("input-team").value.trim();
+      const playerName = document.getElementById("input-player").value.trim();
+      const score1 = parseInt(document.getElementById("input-score1").value, 10) || 0;
+      const score2 = parseInt(document.getElementById("input-score2").value, 10) || 0;
+      const score3 = parseInt(document.getElementById("input-score3").value, 10) || 0;
+
+      if (!teamName || !playerName) {
+        alert("チーム名と選手名は必須入力です。");
+        return;
+      }
+
+      // 二重送信防止
+      submitBtn.disabled = true;
+      submitBtn.innerText = "送信中...";
+
+      // GASのWebHookまたはLINEトーク送信用のテキストを生成
+      // （※LIFF内送信の場合、GAS側でこのテキストをパースする）
+      const messageText = [
+        "【輪投げ成績登録】",
+        `チーム:${teamName}`,
+        `選手:${playerName}`,
+        `点数:${score1},${score2},${score3}`,
+        `合計:${score1 + score2 + score3}`
+      ].join("\n");
+
+      try {
+        if (liff.isInClient()) {
+          // ① LINEアプリ内の場合はトークルームにメッセージとして送信
+          await liff.sendMessages([{ type: "text", text: messageText }]);
+          alert("成績を送信しました！");
+          liff.closeWindow(); // 送信後、自動でLIFFを閉じる
+        } else {
+          // ② 外部ブラウザ等の場合は直接GASのAPIへPOST（デバッグ・予備用）
+          const response = await fetch(GAS_API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "register",
+              teamName,
+              playerName,
+              scores: [score1, score2, score3]
+            })
+          });
+          if (!response.ok) throw new Error("外部ブラウザからの登録に失敗しました");
+          
+          alert("成績を登録しました（ブラウザ経由）");
+          closeRegisterModal();
+          fetchRankingData(); // ランキングを再読み込み
+        }
+      } catch (error) {
+        console.error(error);
+        alert(`エラーが発生しました: ${error.message}`);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "成績を登録する";
+      }
+    }
+
+    // ==========================================
+    // 5. モーダル・UIインタラクション
+    // ==========================================
+
+    function openRegisterModal() {
+      document.getElementById("register-modal").classList.add("active");
+      document.body.style.overflow = "hidden"; // 背景スクロール禁止
+    }
+
+    function closeRegisterModal() {
+      document.getElementById("register-modal").classList.remove("active");
+      document.body.style.overflow = "";
+      document.getElementById("score-form").reset(); // 入力値クリア
+    }
+
+    // ==========================================
+    // 6. LIFF初期化 & エントリーポイント
+    // ==========================================
+
+    async function initApp() {
+      // 1. UIイベントリスナーの登録
+      document.getElementById("tab-team").addEventListener("click", () => switchTab("team"));
+      document.getElementById("tab-player").addEventListener("click", () => switchTab("player"));
+      document.getElementById("btn-open-modal").addEventListener("click", openRegisterModal);
+      document.getElementById("btn-close-modal").addEventListener("click", closeRegisterModal);
+      document.getElementById("score-form").addEventListener("submit", handleFormSubmit);
+      document.getElementById("btn-refresh").addEventListener("click", fetchRankingData);
+
+      // 2. LIFFの初期化
+      try {
+        await liff.init({ liffId: LIFF_ID });
+        
+        // LINE環境下で未ログインならログインを促す
+        if (!liff.isLoggedIn() && liff.isInClient()) {
+          liff.login();
+          return;
+        }
+      } catch (error) {
+        console.warn("LIFFの初期化に失敗しました（通常ブラウザ環境として動作します）:", error);
+      }
+
+      // 3. 初期データの読み込み
+      fetchRankingData();
+    }
+
+    // アプリケーション起動
+    document.addEventListener("DOMContentLoaded", initApp);
+  </script>
+</body>
+</html>
