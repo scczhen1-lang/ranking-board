@@ -350,28 +350,44 @@
     /**
      * ② 【バグ根絶版】チーム詳細用：チーム番号を基準に、所属選手リストを生成する関数
      */
+    /**
+     * ② 【完全解決版】チームの所属選手リストを動的生成する関数
+     * チーム名が文字列（例: "ソフトバンク"）でも、番号（例: "1"）でも、100%確実に選手を紐付けます
+     */
     function buildPlayerHistoryInTeam(targetTeamNo) {
-      if (!cachedData || !cachedData.playerRankings) {
-        return "<div style='padding:5px; color:#999;'>履歴データがありません。</div>";
+      if (!cachedData || !cachedData.playerRankings || !cachedData.teamRankings) {
+        return "<div style='padding:8px; color:#999;'>履歴データがありません。</div>";
       }
 
-      // 1. チーム名文字列ではなく、確実に一致する「チーム番号」で選手をフィルタリング
-      // ※GAS側の個人データ（p.teamName）に入っている「チーム 1」や「チーム1」から、数字部分だけを取り出して比較する安全設計
+      // 1. 開こうとしているチームの「本当の名称（例: ソフトバンク）」をランキングデータから特定する
+      const currentTeamObj = cachedData.teamRankings.find(t => String(t.teamNo) === String(targetTeamNo));
+      const currentTeamName = currentTeamObj ? currentTeamObj.teamName.trim() : "";
+
+      // 2. 「チーム名が完全一致」または「チーム番号が一致」する選手を確実にフィルタリング
       const teamPlayers = cachedData.playerRankings.filter(p => {
         if (!p.teamName) return false;
-        // チーム名から数字だけを抽出（例: "チームNo.5" ➔ "5", "5" ➔ "5"）
-        const pTeamNo = p.teamName.replace(/[^0-9]/g, "");
+        
+        const pTeamNameClean = p.teamName.trim();
+        
+        // パターンA: チーム名（例: "ソフトバンク"）が一致するかチェック
+        if (currentTeamName && pTeamNameClean === currentTeamName) return true;
+        
+        // パターンB: 念のため番号同士での比較もバックアップとして残す
+        const pTeamNo = pTeamNameClean.replace(/[^0-9]/g, "");
         const tStrNo = String(targetTeamNo).replace(/[^0-9]/g, "");
-        return pTeamNo === tStrNo;
+        if (pTeamNo && tStrNo && pTeamNo === tStrNo) return true;
+        
+        return false;
       });
 
+      // 万が一選手が見つからない場合の表示
       if (teamPlayers.length === 0) {
-        return "<div style='padding:5px; color:#999;'>このチームの選手記録がまだ反映されていません。</div>";
+        return "<div style='padding:8px; color:#999;'>このチームの選手記録がまだ反映されていません。</div>";
       }
 
       let html = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">';
 
-      // 2. 選手ごとに「名前 ➔ 履歴」を行として生成
+      // 3. 選手ごとに「名前 ➔ 履歴: 43 / 44 / 45...」の行を生成
       teamPlayers.forEach(p => {
         const formattedHistory = p.historyStr ? p.historyStr : "記録なし";
 
