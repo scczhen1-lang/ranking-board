@@ -16,16 +16,24 @@
     .status-badge { inline-size: max-content; margin: 5px auto; padding: 3px 10px; background: rgba(255,255,255,0.2); border-radius: 15px; font-size: 0.8rem; }
     .update-time { font-size: 0.75rem; opacity: 0.8; margin-top: 5px; }
     
-    /* 🔄 更新ボタン（ヘッダー右上配置） */
-    .header-btn { position: absolute; top: 20px; right: 15px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
-    .header-btn:active { background: rgba(255,255,255,0.4); }
+       /* 🔄 更新ボタン（タイトルの下に一回り下げて配置） */
+    .header-btn { 
+      display: inline-block;
+      margin-top: 10px;        /* タイトルとの間に程よい隙間を作る */
+      background: rgba(255,255,255,0.2); 
+      border: 1px solid rgba(255,255,255,0.4); /* ボタンらしく枠線を追加 */
+      color: white; 
+      padding: 6px 16px;       /* 押しやすいように横幅を少し広げる */
+      border-radius: 20px;     /* 丸みを持たせてモダンなデザインに */
+      font-size: 0.85rem; 
+      font-weight: bold; 
+      cursor: pointer; 
+      transition: background 0.2s;
+    }
+    .header-btn:active { 
+      background: rgba(255,255,255,0.4); 
+    }
 
-    .tabs { display: flex; background: white; margin: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .tab-btn { flex: 1; padding: 12px; text-align: center; background: none; border: none; font-size: 0.95rem; font-weight: bold; color: #666; cursor: pointer; }
-    .tab-btn.active { background-color: var(--primary-color); color: white; }
-    .container { padding: 0 15px; }
-    .content-panel { display: none; }
-    .content-panel.active { display: block; }
     
     /* カードデザイン */
     .rank-card { background: var(--card-bg); border-radius: 8px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
