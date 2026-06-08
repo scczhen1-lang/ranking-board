@@ -317,6 +317,57 @@
         return;
       }
 
+      // ------------------------------------------
+      // ② チーム順位表 ＆ 詳細内訳のレンダリング（安全先行生成版）
+      // ------------------------------------------
+      rankings.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "rank-card";
+        
+        // 💡【解決策】カードを作るその場で、選手リストHTML（カーテンロール）をあらかじめ完全に生成する
+        const compactHistoryHtml = buildPlayerHistoryInTeam(item.teamNo);
+
+        card.innerHTML = `
+          <div class="card-main-content">
+            <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
+            <div class="info-box">
+              <div class="name-main">${item.teamName}</div>
+              <div class="sub-detail">チーム No.${item.teamNo}</div>
+            </div>
+            <div class="score-box">
+              <span class="score-num">${item.totalScore}</span><span class="score-unit">点</span>
+            </div>
+          </div>
+          
+          <div class="member-history-panel" id="history-${item.teamNo}">
+            ${compactHistoryHtml}
+          </div>
+        `;
+
+        // 💡 タップされたら、すでに完成しているパネルの「open」クラスを切り替えるだけ（最速・安全）
+        card.addEventListener("click", () => {
+          const detailPanel = card.querySelector(".member-history-panel");
+          if (detailPanel) {
+            detailPanel.classList.toggle("open");
+          }
+        });
+
+        listContainer.appendChild(card);
+      });
+    }
+
+    /**
+     * 個人別ランキングのレンダリング
+     */
+    function renderPlayerRanking(rankings) {
+      const panel = document.getElementById("player-panel");
+      panel.innerHTML = "";
+
+      if (rankings.length === 0) {
+        panel.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>記録がありません。</p>";
+        return;
+      }
+
       rankings.forEach(item => {
         const card = document.createElement("div");
         card.className = "rank-card";
@@ -325,7 +376,6 @@
           <div class="card-main-content">
             <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
             <div class="info-box">
-              <!-- ③ 名前の真横にチーム名タグを並列配置 -->
               <div class="name-container">
                 <span class="name-main">${item.playerName}</span>
                 <span class="team-tag">${item.teamName}</span>
@@ -344,35 +394,26 @@
     }
 
     /**
-     * ② 【新開発】チーム詳細用：所属する選手ごとに全ラウンドの履歴を「/」区切りで並べる関数
-     * 5人、6人など何人登録されていても、そのチームに所属する全選手分をリスト化します
-     */
-    /**
-     * ② 【バグ根絶版】チーム詳細用：チーム番号を基準に、所属選手リストを生成する関数
-     */
-    /**
-     * ② 【完全解決版】チームの所属選手リストを動的生成する関数
-     * チーム名が文字列（例: "ソフトバンク"）でも、番号（例: "1"）でも、100%確実に選手を紐付けます
+     * ② チームの所属選手リストを動的生成する関数
      */
     function buildPlayerHistoryInTeam(targetTeamNo) {
       if (!cachedData || !cachedData.playerRankings || !cachedData.teamRankings) {
         return "<div style='padding:8px; color:#999;'>履歴データがありません。</div>";
       }
 
-      // 1. 開こうとしているチームの「本当の名称（例: ソフトバンク）」をランキングデータから特定する
+      // 開こうとしているチームのオブジェクトを取得
       const currentTeamObj = cachedData.teamRankings.find(t => String(t.teamNo) === String(targetTeamNo));
       const currentTeamName = currentTeamObj ? currentTeamObj.teamName.trim() : "";
 
-      // 2. 「チーム名が完全一致」または「チーム番号が一致」する選手を確実にフィルタリング
+      // チーム名が完全一致する選手を抽出
       const teamPlayers = cachedData.playerRankings.filter(p => {
         if (!p.teamName) return false;
-        
         const pTeamNameClean = p.teamName.trim();
         
-        // パターンA: チーム名（例: "ソフトバンク"）が一致するかチェック
+        // パターンA: チーム名（例: "ソフトバンク"）で比較
         if (currentTeamName && pTeamNameClean === currentTeamName) return true;
         
-        // パターンB: 念のため番号同士での比較もバックアップとして残す
+        // パターンB: 番号での比較（バックアップ用）
         const pTeamNo = pTeamNameClean.replace(/[^0-9]/g, "");
         const tStrNo = String(targetTeamNo).replace(/[^0-9]/g, "");
         if (pTeamNo && tStrNo && pTeamNo === tStrNo) return true;
@@ -380,14 +421,12 @@
         return false;
       });
 
-      // 万が一選手が見つからない場合の表示
       if (teamPlayers.length === 0) {
         return "<div style='padding:8px; color:#999;'>このチームの選手記録がまだ反映されていません。</div>";
       }
 
       let html = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">';
 
-      // 3. 選手ごとに「名前 ➔ 履歴: 43 / 44 / 45...」の行を生成
       teamPlayers.forEach(p => {
         const formattedHistory = p.historyStr ? p.historyStr : "記録なし";
 
@@ -428,7 +467,7 @@
     }
 
     /**
-     * アプリケーションの初期化とエントリーポイント（表示専用版）
+     * アプリケーションの初期化
      */
     async function initApp() {
       document.getElementById("tab-team").addEventListener("click", () => switchTab("team"));
@@ -443,7 +482,7 @@
             return;
           }
         } catch (error) {
-          console.warn("LIFF初期化スキップ（通常ブラウザ環境として動作中）:", error);
+          console.warn("LIFF初期化スキップ（通常ブラウザ動作中）:", error);
         }
       }
       
