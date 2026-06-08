@@ -240,11 +240,11 @@
         // ②のカーテンロール内データ生成は、データの再構成が必要なため、
         // 描画コストを下げるために引数としてcachedData全体のプレイヤー一覧を
         // 参照できるように第3ブロックの処理に委ねます。
+        // ① チーム名を主役にしたカード構造
         card.innerHTML = `
           <div class="card-main-content">
             <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
             <div class="info-box">
-              <!-- メインにチーム名を大文字で配置し、下に小さくNoを表示 -->
               <div class="name-main">${item.teamName}</div>
               <div class="sub-detail">チーム No.${item.teamNo}</div>
             </div>
@@ -254,16 +254,16 @@
           </div>
           
           <div class="member-history-panel" id="history-${item.teamNo}">
-            <!-- ここに②の「選手名：R1 / R2 / R3...」形式のリストが動的に入ります -->
+            <!-- ここに②の「選手名：R1 / R2...」のリストが動的に入ります -->
           </div>
         `;
 
-        // アコーディオン開閉時に、中身が空ならその瞬間に組み立てる（爆速化設計）
+        // アコーディオン開閉イベント（★teamNoを渡して確実に紐付け！）
         card.addEventListener("click", () => {
           const detailPanel = card.querySelector(".member-history-panel");
           if (detailPanel) {
-            if (detailPanel.innerHTML.trim() === "" || detailPanel.innerHTML.includes("履歴データがありません")) {
-              detailPanel.innerHTML = buildPlayerHistoryInTeam(item.teamName);
+            if (detailPanel.innerHTML.trim() === "") {
+              detailPanel.innerHTML = buildPlayerHistoryInTeam(item.teamNo);
             }
             detailPanel.classList.toggle("open");
           }
@@ -315,23 +315,32 @@
      * ② 【新開発】チーム詳細用：所属する選手ごとに全ラウンドの履歴を「/」区切りで並べる関数
      * 5人、6人など何人登録されていても、そのチームに所属する全選手分をリスト化します
      */
-    function buildPlayerHistoryInTeam(targetTeamName) {
+    /**
+     * ② 【バグ根絶版】チーム詳細用：チーム番号を基準に、所属選手リストを生成する関数
+     */
+    function buildPlayerHistoryInTeam(targetTeamNo) {
       if (!cachedData || !cachedData.playerRankings) {
-        return "<div>履歴データがありません。</div>";
+        return "<div style='padding:5px; color:#999;'>履歴データがありません。</div>";
       }
 
-      // 1. 全個人ランキングデータから、このチームに属する選手だけを抽出
-      const teamPlayers = cachedData.playerRankings.filter(p => p.teamName === targetTeamName);
+      // 1. チーム名文字列ではなく、確実に一致する「チーム番号」で選手をフィルタリング
+      // ※GAS側の個人データ（p.teamName）に入っている「チーム 1」や「チーム1」から、数字部分だけを取り出して比較する安全設計
+      const teamPlayers = cachedData.playerRankings.filter(p => {
+        if (!p.teamName) return false;
+        // チーム名から数字だけを抽出（例: "チームNo.5" ➔ "5", "5" ➔ "5"）
+        const pTeamNo = p.teamName.replace(/[^0-9]/g, "");
+        const tStrNo = String(targetTeamNo).replace(/[^0-9]/g, "");
+        return pTeamNo === tStrNo;
+      });
 
       if (teamPlayers.length === 0) {
-        return "<div>まだこのチームの個人記録が登録されていません。</div>";
+        return "<div style='padding:5px; color:#999;'>このチームの選手記録がまだ反映されていません。</div>";
       }
 
       let html = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">';
 
-      // 2. 抽出した選手ごとに「名前：R1の点 / R2の点 / ...」のセット（行）を生成
+      // 2. 選手ごとに「名前 ➔ 履歴」を行として生成
       teamPlayers.forEach(p => {
-        // すでにGAS側で「25 / 30 / 28」のようにスラッシュ区切り文字列（historyStr）が生成されているためそのまま活用
         const formattedHistory = p.historyStr ? p.historyStr : "記録なし";
 
         html += `
