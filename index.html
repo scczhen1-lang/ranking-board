@@ -64,10 +64,42 @@
     .r-color-default { background-color: #6b7280; }
 
     /* ② チーム詳細アコーディオン（カーテンロール）用 */
-    .member-history-panel { display: none; margin-block-start: 10px; padding: 10px; border-block-start: 1px dashed #ddd; font-size: 0.85rem; color: #444; background: #fafafa; border-radius: 4px; }
-    .member-history-panel.open { display: block; }
-    .player-row-in-team { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 6px 10px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 4px; }
-    .player-row-in-team:last-child { margin-bottom: 0; }
+    /* ② チーム詳細アコーディオン：高さ制限を完全撤廃し、中身に応じて全開にする */
+    .member-history-panel { 
+      display: none; 
+      margin-block-start: 10px; 
+      padding: 10px; 
+      border-block-start: 1px dashed #ddd; 
+      font-size: 0.85rem; 
+      color: #444; 
+      background: #fafafa; 
+      border-radius: 4px; 
+      /* 高さを固定せず、内部の要素（選手リスト）の高さに100%自動で合わせる */
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+    
+    /* クラス「open」がついた瞬間に表示する */
+    .member-history-panel.open { 
+      display: block !important; 
+    }
+    
+    /* アコーディオン内の各選手行の間隔を少し広げて見やすく調整 */
+    .player-row-in-team { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      background: #fff; 
+      padding: 8px 12px; 
+      border-radius: 4px; 
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+      margin-bottom: 6px; 
+    }
+    .player-row-in-team:last-child { 
+      margin-bottom: 0; 
+    }
+
     .history-round-label { font-weight: bold; color: var(--primary-color); }
 
     #loader { text-align: center; padding: 40px 0; font-size: 1rem; color: #666; }
