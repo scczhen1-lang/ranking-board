@@ -263,70 +263,71 @@
       });
 
       // ------------------------------------------
-      // ① 【デザイン修正】チーム順位表：チーム名を大きく強調したカード
+      // ② チーム順位表 ＆ 詳細内訳のレンダリング（データ独立生成版）
       // ------------------------------------------
       rankings.forEach(item => {
         const card = document.createElement("div");
         card.className = "rank-card";
         
-        // ②のカーテンロール内データ生成は、データの再構成が必要なため、
-        // 描画コストを下げるために引数としてcachedData全体のプレイヤー一覧を
-        // 参照できるように第3ブロックの処理に委ねます。
-        // ① チーム名を主役にしたカード構造
-        card.innerHTML = `
-          <div class="card-main-content">
-            <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
-            <div class="info-box">
-              <div class="name-main">${item.teamName}</div>
-              <div class="sub-detail">チーム No.${item.teamNo}</div>
-            </div>
-            <div class="score-box">
-              <span class="score-num">${item.totalScore}</span><span class="score-unit">点</span>
-            </div>
-          </div>
-          
-          <div class="member-history-panel" id="history-${item.teamNo}">
-            <!-- ここに②の「選手名：R1 / R2...」のリストが動的に入ります -->
-          </div>
-        `;
+        // 💡【バグ根絶の核心】個人順位データ(playerRankings)を一切見ず、
+        // チームデータ内の memberHistory から直接「選手名: R1 / R2...」のカーテンロールを組み立てる
+        let compactHistoryHtml = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">';
+        let hasData = false;
 
-        // アコーディオン開閉イベント（★teamNoを渡して確実に紐付け！）
-        card.addEventListener("click", () => {
-          const detailPanel = card.querySelector(".member-history-panel");
-          if (detailPanel) {
-            if (detailPanel.innerHTML.trim() === "") {
-              detailPanel.innerHTML = buildPlayerHistoryInTeam(item.teamNo);
-            }
-            detailPanel.classList.toggle("open");
-          }
+        // 選手ごとに各ラウンドの得点を集約するためのテンポラリオブジェクト
+        const playerMapInTeam = {};
+
+        if (item.memberHistory && typeof item.memberHistory === "object") {
+          // 各ラウンド（R1, R2, R3...）をループして選手名と得点を取り出す
+          Object.keys(item.memberHistory).sort().forEach(rKey => {
+            const rawString = item.memberHistory[rKey]; // 例: "周東佑京(43) / 柳田悠岐(42)"
+            if (!rawString) return;
+
+            const players = rawString.split("/").map(p => p.trim());
+            players.forEach(player => {
+              if (!player) return;
+              const match = player.match(/^(.+?)\((.+?)\)$/);
+              if (match) {
+                const pName = match[1].trim();
+                const pScore = parseInt(match[2], 10) || 0;
+
+                if (!playerMapInTeam[pName]) {
+                  playerMapInTeam[pName] = { scores: [], total: 0, count: 0 };
+                }
+                // ラウンド（R1, R2）の順番に合わせて得点をストック
+                playerMapInTeam[pName].scores.push(pScore);
+                playerMapInTeam[pName].total += pScore;
+                playerMapInTeam[pName].count += 1;
+              }
+            });
+          });
+        }
+
+        // 組み立てた選手データを「選手名 ➔ 履歴: 43 / 44 / 45...」の1行ずつに変換してHTMLにする
+        Object.keys(playerMapInTeam).forEach(pName => {
+          hasData = true;
+          const pData = playerMapInTeam[pName];
+          const formattedHistory = pData.scores.join(" / "); // 横一列にスラッシュ区切り
+
+          compactHistoryHtml += `
+            <div class="player-row-in-team">
+              <span style="font-size: 0.85rem; font-weight: bold; color: #444;">${pName}</span>
+              <span style="font-size: 0.85rem; color: #666; font-weight: bold;">
+                <span style="color: #999; font-size: 0.75rem; font-weight: normal; margin-right: 4px;">履歴:</span>
+                ${formattedHistory}
+                <span style="color: #888; font-size: 0.75rem; font-weight: normal; margin-left: 4px;">(${pData.count}試合 / 計 ${pData.total}点)</span>
+              </span>
+            </div>
+          `;
         });
 
-        listContainer.appendChild(card);
-      });
-    }
+        compactHistoryHtml += '</div>';
 
-    /**
-     * 個人別ランキングのレンダリング
-     */
-    function renderPlayerRanking(rankings) {
-      const panel = document.getElementById("player-panel");
-      panel.innerHTML = "";
+        if (!hasData) {
+          compactHistoryHtml = "<div style='padding:8px; color:#999;'>このチームの選手記録がまだ反映されていません。</div>";
+        }
 
-      if (rankings.length === 0) {
-        panel.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>記録がありません。</p>";
-        return;
-      }
-
-      // ------------------------------------------
-      // ② チーム順位表 ＆ 詳細内訳のレンダリング（安全先行生成版）
-      // ------------------------------------------
-      rankings.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "rank-card";
-        
-        // 💡【解決策】カードを作るその場で、選手リストHTML（カーテンロール）をあらかじめ完全に生成する
-        const compactHistoryHtml = buildPlayerHistoryInTeam(item.teamNo);
-
+        // HTMLカードの生成
         card.innerHTML = `
           <div class="card-main-content">
             <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
@@ -344,7 +345,7 @@
           </div>
         `;
 
-        // 💡 タップされたら、すでに完成しているパネルの「open」クラスを切り替えるだけ（最速・安全）
+        // タップしたときに「open」クラスを切り替えてスッと全開させる
         card.addEventListener("click", () => {
           const detailPanel = card.querySelector(".member-history-panel");
           if (detailPanel) {
@@ -391,59 +392,6 @@
         `;
         panel.appendChild(card);
       });
-    }
-
-    /**
-     * ② チームの所属選手リストを動的生成する関数
-     */
-    function buildPlayerHistoryInTeam(targetTeamNo) {
-      if (!cachedData || !cachedData.playerRankings || !cachedData.teamRankings) {
-        return "<div style='padding:8px; color:#999;'>履歴データがありません。</div>";
-      }
-
-      // 開こうとしているチームのオブジェクトを取得
-      const currentTeamObj = cachedData.teamRankings.find(t => String(t.teamNo) === String(targetTeamNo));
-      const currentTeamName = currentTeamObj ? currentTeamObj.teamName.trim() : "";
-
-      // チーム名が完全一致する選手を抽出
-      const teamPlayers = cachedData.playerRankings.filter(p => {
-        if (!p.teamName) return false;
-        const pTeamNameClean = p.teamName.trim();
-        
-        // パターンA: チーム名（例: "ソフトバンク"）で比較
-        if (currentTeamName && pTeamNameClean === currentTeamName) return true;
-        
-        // パターンB: 番号での比較（バックアップ用）
-        const pTeamNo = pTeamNameClean.replace(/[^0-9]/g, "");
-        const tStrNo = String(targetTeamNo).replace(/[^0-9]/g, "");
-        if (pTeamNo && tStrNo && pTeamNo === tStrNo) return true;
-        
-        return false;
-      });
-
-      if (teamPlayers.length === 0) {
-        return "<div style='padding:8px; color:#999;'>このチームの選手記録がまだ反映されていません。</div>";
-      }
-
-      let html = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">';
-
-      teamPlayers.forEach(p => {
-        const formattedHistory = p.historyStr ? p.historyStr : "記録なし";
-
-        html += `
-          <div class="player-row-in-team">
-            <span style="font-size: 0.85rem; font-weight: bold; color: #444;">${p.playerName}</span>
-            <span style="font-size: 0.85rem; color: #666; font-weight: bold;">
-              <span style="color: #999; font-size: 0.75rem; font-weight: normal; margin-right: 4px;">履歴:</span>
-              ${formattedHistory}
-              <span style="color: #888; font-size: 0.75rem; font-weight: normal; margin-left: 4px;">(${p.gameCount}試合 / 計 ${p.totalScore}点)</span>
-            </span>
-          </div>
-        `;
-      });
-
-      html += '</div>';
-      return html;
     }
 
     /**
