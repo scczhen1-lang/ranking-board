@@ -7,105 +7,276 @@
   <link rel="apple-touch-icon" href="icon.png?v=5"> 
   <link rel="icon" type="image/png" sizes="192x192" href="icon.png?v=5"> 
   <meta name="apple-mobile-web-app-title" content="輪投げ大会"> 
-  <style>
-    :root { --primary-color: #00b900; --secondary-color: #333; --bg-color: #f4f6f9; --card-bg: #fff; }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--secondary-color); padding-bottom: 30px; }
+    <style>
+    :root { 
+      --primary-color: #008f00; /* 💡やや濃い緑にして、白文字とのコントラストを高めました */
+      --secondary-color: #111111; /* 💡文字色をより真っ黒に近くし、ハッキリさせました */
+      --bg-color: #eef2f7; 
+      --card-bg: #ffffff; 
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; }
     
-    header { background: linear-gradient(135deg, var(--primary-color), #009900); color: white; padding: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    h1 { font-size: 1.3rem; margin-bottom: 0px; }
+    body { 
+      background-color: var(--bg-color); 
+      color: var(--secondary-color); 
+      padding-bottom: 40px; 
+      font-size: 1.15rem; /* 💡全体の基本文字サイズを約1.2倍大きくしました */
+      line-height: 1.5;
+    }
     
-    .header-btn { display: inline-block; margin-top: 8px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-    .header-btn:active { background: rgba(255,255,255,0.4); }
+    header { background: linear-gradient(135deg, var(--primary-color), #007700); color: white; padding: 18px 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.15); }
+    h1 { font-size: 1.6rem; font-weight: 900; margin-bottom: 0px; } /* 💡タイトルを太く大きく */
+    
+    .header-btn { display: inline-block; margin-top: 10px; background: rgba(255,255,255,0.25); border: 2px solid white; color: white; padding: 6px 18px; border-radius: 20px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: background 0.2s; }
+    .header-btn:active { background: rgba(255,255,255,0.45); }
 
-    .tabs { display: flex; background: white; margin: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); width: calc(100% - 30px); }
-    .tab-btn { flex: 1; width: 50%; padding: 14px 10px; text-align: center; background: none; border: none; font-size: 1rem; font-weight: bold; color: #666; cursor: pointer; display: block; }
+    /* ==========================================
+       ① 左右の幅を画面いっぱいにする調整
+       ========================================== */
+    .tabs { 
+      display: flex; 
+      background: white; 
+      margin: 15px 0; /* 💡左右の余白（15px）を「0」にして画面いっぱいに */
+      border-radius: 0; /* 💡画面いっぱいにするため角丸をフラットに */
+      overflow: hidden; 
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1); 
+      width: 100%; /* 💡幅100%に固定 */
+      border-left: none;
+      border-right: none;
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+    }
+    .tab-btn { flex: 1; width: 50%; padding: 16px 10px; text-align: center; background: none; border: none; font-size: 1.25rem; font-weight: 900; color: #444; cursor: pointer; display: block; }
     .tab-btn.active { background-color: var(--primary-color) !important; color: white !important; }
     
-    .container { padding: 0 15px; }
+    .container { 
+      padding: 0; /* 💡コンテナ左右の余白（15px）を「0」にしてカードを画面いっぱいに */
+    }
     .content-panel { display: none; }
     .content-panel.active { display: block; }
     
-    /* カードデザイン */
-    .rank-card { background: var(--card-bg); border-radius: 8px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
+    /* 各種カードの幅を画面いっぱいに広げる */
+    .rank-card { 
+      background: var(--card-bg); 
+      border-radius: 0; /* 💡画面いっぱいに広げるため外側の角丸（12px）を「0」にして洗練 */
+      padding: 18px 15px; 
+      margin-bottom: 10px; 
+      border: none; 
+      border-bottom: 1px solid #e5e7eb; /* 💡カード同士の区切り線をすっきり配置 */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); 
+      cursor: pointer; 
+      width: 100%;
+    }
+
     .card-main-content { display: flex; align-items: center; }
-    .rank-num { font-size: 1.3rem; font-weight: bold; inline-size: 40px; text-align: center; margin-right: 15px; color: #888; }
-    .rank-1 { color: #dfac11; font-size: 1.6rem; }
-    .rank-2 { color: #b1b1b1; font-size: 1.5rem; }
-    .rank-3 { color: #b68553; font-size: 1.4rem; }
+    
+    /* 🥇 メダルの巨大化 ＆ フチ取り強化 */
+    .rank-num { 
+      font-size: 1.6rem; 
+      font-weight: 900; 
+      min-width: 55px; /* 💡幅を広げて数字が隠れないように */
+      max-width: 55px;
+      height: 55px;
+      line-height: 51px; /* 💡円の中で中央に配置 */
+      text-align: center; 
+      margin-right: 15px; 
+      color: #333; 
+      background: #e6e6e6; /* 💡4位以降も分かりやすく丸バッジ化 */
+      border-radius: 50%;
+      border: 2px solid #ccc;
+    }
+    /* 1位〜3位は視認性の高いクッキリフチ取り（白フチ＋黒フチ）を施した巨大メダルに */
+/* 🛠️ メダル部分の修正イメージ */
+.rank-1 { 
+  background: linear-gradient(135deg, #ffd700, #ffa500); /* 💡金〜オレンジのグラデーション */
+  color: #000000; 
+  font-size: 2.1rem; 
+  border: 3px solid #b58600;
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.4); /* 💡内側に光の筋を入れる */
+}
+.rank-2 { 
+  background: linear-gradient(135deg, #f0f0f0, #b0b0b0); /* 💡銀のグラデーション */
+  color: #000000; 
+  border: 3px solid #777;
+}
+.rank-3 { 
+  background: linear-gradient(135deg, #f4a460, #cd7f32); /* 💡銅のグラデーション */
+  color: #000000; 
+  border: 3px solid #8b4513;
+}
+
+    
     .info-box { flex: 1; }
     
-    /* ① 【修正】チーム順位のフォント調整：メインをチーム名にし、大きく強調 */
-    .name-main { font-size: 1.2rem; font-weight: bold; color: #111; line-height: 1.3; }
-    .name-container { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-    .team-tag { font-size: 0.75rem; color: #666; background: #eee; padding: 2px 6px; border-radius: 4px; font-weight: normal; }
+    /* 名前とチーム名バッジ */
+    .name-main { font-size: 1.4rem; font-weight: 900; color: #000000; line-height: 1.4; } /* 💡名前を1.4remの極太に */
+    .name-container { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
     
-    .sub-detail { font-size: 0.8rem; color: #777; white-space: normal; word-break: break-all; line-height: 1.4; }
-    .score-box { text-align: right; min-inline-size: 70px; }
-    .score-num { font-size: 1.4rem; font-weight: bold; color: var(--primary-color); }
-    .score-unit { font-size: 0.8rem; color: #777; }
+    /* 💡【ご要望】チーム名バッジの背景を黄色・太文字、かつフチを黒くして視認性爆上げ */
+    /* 🛠️ .team-tag の修正イメージ */
+.team-tag { 
+  font-size: 1.05rem;
+  color: #000000 !important; 
+  background-color: #ffe082 !important; /* 💡少し目に優しいパステル調の明るい黄色に */
+  padding: 4px 14px; /* 💡横の余白を広げてリボン風にする */
+  border-radius: 20px; /* 💡完全に丸いカプセル型にしてスマートに */
+  font-weight: 900 !important; 
+  border: 2px solid #000000; 
+}
 
-    /* 独立したチーム比較グラフ用のデザイン */
-    .chart-card { background: var(--card-bg); border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .chart-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 12px; color: #444; border-left: 4px solid var(--primary-color); padding-left: 8px; }
-    .chart-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 0.8rem; }
-    .chart-axis-label { min-inline-size: 75px; max-inline-size: 75px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 5px; text-align: right; }
-    .chart-bar-area { flex: 1; position: relative; }
-    .stacked-bar-container { background: #eee; border-radius: 4px; overflow: hidden; display: flex; height: 18px; inline-size: 100%; }
-    .bar-segment { height: 100%; text-align: center; color: white; font-size: 0.65rem; font-weight: bold; line-height: 18px; transition: width 0.3s; }
-    .chart-row-score { min-inline-size: 40px; text-align: left; padding-left: 8px; font-weight: bold; color: var(--primary-color); }
     
-    .r-color-1 { background-color: #3b82f6; } 
-    .r-color-2 { background-color: #10b981; } 
-    .r-color-3 { background-color: #f59e0b; } 
-    .r-color-4 { background-color: #ef4444; } 
-    .r-color-5 { background-color: #8b5cf6; }
-    .r-color-6 { background-color: #ec4899; }
-    .r-color-default { background-color: #6b7280; }
+    .sub-detail { font-size: 1.05rem; font-weight: bold; color: #444; white-space: normal; word-break: break-all; line-height: 1.5; } /* 💡内訳の文字も太く大きく */
+    
+    /* 得点表示 */
+    .score-box { text-align: right; min-width: 85px; }
+    .score-num { font-size: 1.8rem; font-weight: 900; color: var(--primary-color); } /* 💡合計点数を特大に */
+    .score-unit { font-size: 1rem; font-weight: bold; color: #333; margin-left: 1px; }
 
-    /* ② チーム詳細アコーディオン（カーテンロール）用 */
-    /* ② チーム詳細アコーディオン：高さ制限を完全撤廃し、中身に応じて全開にする */
+    /* 📊 グラフデザイン */
+    .chart-card { 
+      background: var(--card-bg); 
+      border-radius: 0; /* 💡グラフカードも画面いっぱいに広げるため角丸を「0」に */
+      padding: 18px 15px; 
+      margin-bottom: 15px; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+      border: none;
+      border-bottom: 1px solid #e5e7eb;
+      width: 100%;
+    }
+    .chart-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 14px; color: #111; border-left: 6px solid var(--primary-color); padding-left: 10px; }
+        /* ==========================================
+       📊 グラフエリアの「2段レイアウト」専用調整
+       ========================================== */
+    .chart-row { 
+      display: block; /* 💡横並び（flex）をやめ、縦に並ぶ（block）2段構成に変更 */
+      margin-bottom: 4px; /* 💡行と行の間を少しつめて見やすく */
+      width: 100%;
+    }
+    
+    /* 1段目：チーム名（グラフの真上に配置） */
+    .chart-axis-label { 
+      width: 100% !important; /* 💡幅いっぱいに広げる */
+      max-width: none !important; 
+      min-width: 0 !important;
+      font-weight: 900; 
+      font-size: 1.0rem; /* 💡極太ながら、バーを邪魔しないスマートなサイズに */
+      color: #000000; 
+      text-align: left; /* 💡左揃えにして、ここからグラフが始まることを明示 */
+      margin-bottom: 0px; /* 💡下の横棒との隙間を少し空ける */
+      padding-left: 2px;
+      line-height: 1.1; /* 💡文字自体の縦幅もスマートに */
+    }
+    
+    /* 2段目：横棒と合計点数の横並びエリア */
+    .chart-bar-flex-group {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 30px; /* 💡横棒エリアの高さを固定して、縦に広がるのを防止 */
+    }
+    
+    .chart-bar-area {
+      flex: 1; /* 💡横棒が画面左端から右端の手前まで最大限に伸びる */
+      position: relative;
+      width: 0; /* 💥【超重要・オーバーフロー防止】これを入れることで、横棒が右端の点数を押し出さなくなり、改行（3段目への落下）を100%防ぎます */
+    }
+    
+    /* 横棒全体のデザイン（角ばったフラット型） */
+    .stacked-bar-container { 
+      background: #dddddd; 
+      border-radius: 4px; 
+      overflow: hidden; 
+      display: flex; 
+      height: 24px; /* 💡太さはslimでド迫力を維持 */
+      width: 100%; 
+      border: 0px solid #333;
+      background-image: linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.05) 100%);
+    }
+    
+    /* 右端：合計点数表示 */
+    .chart-row-score { 
+      min-width: 70px; /* 💡点数が見切れないように少し幅を確保 */
+      text-align: right; 
+      padding-left: 6px; 
+      font-weight: 900; 
+      font-size: 1.3rem; /* 💡点数をパッと見やすく少し大きく */
+      color: var(--primary-color);
+      line-height: 30px; /* 💡横棒の高さとピッタリ高さを合わせて中央揃え */ 
+    }
+
+    
+    /* グラフの色も濁りのないハッキリしたユニバーサル配色に調整 */
+    .r-color-1 { background-color: #00BFFF; } /* DeepSkyBlue */
+    .r-color-2 { background-color: #FF3AD8; } /* 濃いピンク */
+    .r-color-3 { background-color: #29FF14; } /* 濃い緑 */
+    .r-color-4 { background-color: #FF1437; } /* 濃い赤 */
+    .r-color-5 { background-color: #A632FF; } /* 濃い紫 */
+    .r-color-6 { background-color: #FFCD28; } /* 濃いオレンジ */
+    .r-color-default { background-color: #4b5563; }
+
+    /* アコーディオン */
     .member-history-panel { 
       display: none; 
-      margin-block-start: 10px; 
+      margin-top: 12px; 
       padding: 10px; 
-      border-block-start: 1px dashed #ddd; 
-      font-size: 0.85rem; 
-      color: #444; 
-      background: #fafafa; 
-      border-radius: 4px; 
-      /* 高さを固定せず、内部の要素（選手リスト）の高さに100%自動で合わせる */
+      border-top: 2px dashed #999; 
+      background: #fdfdfd; 
+      border-radius: 6px; 
       height: auto !important;
       max-height: none !important;
       overflow: visible !important;
     }
-    
-    /* クラス「open」がついた瞬間に表示する */
     .member-history-panel.open { 
       display: block !important; 
     }
-    
-    /* アコーディオン内の各選手行の間隔を少し広げて見やすく調整 */
-    .player-row-in-team { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      background: #fff; 
-      padding: 8px 12px; 
-      border-radius: 4px; 
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
-      margin-bottom: 6px; 
+
+    /* 📲 スマホ専用一覧表（Table）のシニア向け超くっきり強化 */
+    .sm-table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 8px;
+      border: 1px solid #999;
+      border-radius: 4px;
     }
-    .player-row-in-team:last-child { 
-      margin-bottom: 0; 
+    .sm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1.05rem; /* 💡小さな文字を廃止し、表の中も1.05remに大きく！ */
+    }
+    .sm-table th, .sm-table td {
+      padding: 8px 6px; /* 💡タップしやすく、見やすいように余白を拡大 */
+      border: 2px solid #666666; /* 💡薄いグレーの線をやめ、濃い太枠線にして格子をクッキリ化 */
+      text-align: center;
+      vertical-align: middle;
+      color: #000000;
+    }
+    .sm-table th {
+      background-color: #d5d5d5; /* 💡ヘッダー背景をやや濃くして白文字・黒文字を際立たせる */
+      font-weight: 900;
+      color: #000000;
+    }
+    .sm-table td.col-bold {
+      font-weight: 900;
+    }
+    .sm-table td.col-score {
+      font-weight: 900;
+      color: #c2185b; /* 💡合計点数は、よりハッキリした濃いローズピンクに変更 */
+      text-align: right;
+      padding-right: 6px;
+      font-size: 1.15rem;
+    }
+    .sm-table td.col-nums {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-weight: bold;
+      color: #000;
+      font-size: 1.1rem;
     }
 
-    .history-round-label { font-weight: bold; color: var(--primary-color); }
-
-    #loader { text-align: center; padding: 40px 0; font-size: 1rem; color: #666; }
-    .spinner { animation: spin 1s linear infinite; margin-bottom: 10px; font-size: 2rem; display: inline-block; }
+    #loader { text-align: center; padding: 50px 0; font-size: 1.3rem; font-weight: bold; color: #333; }
+    .spinner { animation: spin 1s linear infinite; margin-bottom: 12px; font-size: 2.5rem; display: inline-block; color: var(--primary-color); }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
+
 </head>
 <body>
 
@@ -135,9 +306,8 @@
 
   <script src="https://line-scdn.net"></script>
   <script>
-
     // ==========================================
-    // 設定値の同期（★必ずご自身のURL・IDに書き換えてください）
+    // 設定値の同期
     // ==========================================
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwl-uBmBdjn2GF-w9frE4yjv_x5LXQ5Z-X7-ZmdMb1UmU4NVSHp04xJE4n2UxlzrInsSA/exec"; 
     const LIFF_ID = "2010124743-2q52f1la"; 
@@ -208,154 +378,236 @@
         renderPlayerRanking(data.playerRankings || []);
       }
     }
-
     /**
      * チーム別ランキング ＆ 独立全体比較グラフのレンダリング
      */
-    function renderTeamRanking(rankings) {
-      const chartContainer = document.getElementById("team-chart-container");
-      const listContainer = document.getElementById("team-list-container");
-      
-      chartContainer.innerHTML = "";
-      listContainer.innerHTML = "";
+function renderTeamRanking(rankings) {
+  const chartContainer = document.getElementById("team-chart-container");
+  const listContainer = document.getElementById("team-list-container");
+  
+  if (!chartContainer || !listContainer) {
+    console.error("必要なコンテナが見つかりません。");
+    return;
+  }
+  
+  chartContainer.innerHTML = "";
+  listContainer.innerHTML = "";
 
-      if (rankings.length === 0) {
-        listContainer.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>記録がありません。</p>";
-        chartContainer.style.display = "none";
-        return;
+  if (!rankings || rankings.length === 0) {
+    listContainer.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>記録がありません。</p>";
+    chartContainer.style.display = "none";
+    return;
+  }
+
+  // ------------------------------------------
+  // ① 独立したチーム比較グラフの作成
+  // ------------------------------------------
+  chartContainer.style.display = "block";
+  chartContainer.innerHTML = `<div class="chart-title">🏆 チーム総得点 リアルタイム比較</div>`;
+  
+  const maxTeamScore = Math.max(...rankings.map(t => t.totalScore || 1));
+  
+  // 💡【安全ガード】cachedData が無くてもエラーにならないように修正
+  let maxRound = 5;
+  try {
+    if (typeof cachedData !== 'undefined' && cachedData && cachedData.maxRound) {
+      maxRound = cachedData.maxRound;
+    }
+  } catch(e) { maxRound = 5; }
+
+  rankings.forEach(item => {
+    let barSegmentsHtml = "";
+    if (!item.roundDetails) item.roundDetails = {};
+    
+    for (let r = 1; r <= maxRound; r++) {
+      const rScore = item.roundDetails[`R${r}`] || 0;
+      if (rScore > 0 && item.totalScore > 0) {
+        const percentInTeam = (rScore / item.totalScore) * 100;
+        const colorClass = r === 1 ? 'r-color-1' : r === 2 ? 'r-color-2' : r === 3 ? 'r-color-3' : r === 4 ? 'r-color-4' : r === 5 ? 'r-color-5' : r === 6 ? 'r-color-6' : 'r-color-default';
+        barSegmentsHtml += `<div class="bar-segment ${colorClass}" style="width: ${percentInTeam}%" title="R${r}: ${rScore}点"></div>`;
       }
+    }
 
-      // ------------------------------------------
-      // 独立したチーム比較グラフの作成
-      // ------------------------------------------
-      chartContainer.style.display = "block";
-      chartContainer.innerHTML = `<div class="chart-title">🏆 チーム総得点 リアルタイム比較</div>`;
+    const containerWidthPercent = (item.totalScore / maxTeamScore) * 100;
+
+    // 💡【チーム名解決】データ内のチーム名・Noのキーのブレを完全に吸収し、フルテキストで表示
+    const displayTeamName = item.teamName || (item.teamNo ? "チーム" + item.teamNo : '不明チーム');
+
+    const chartRow = document.createElement("div");
+    chartRow.className = "chart-row";
+    chartRow.innerHTML = `
+      <!-- 💡【1段目】真上にフルネームで表示されるチーム名 -->
+      <div class="chart-axis-label">${displayTeamName}</div>
       
-      const maxTeamScore = Math.max(...rankings.map(t => t.totalScore || 1));
-      const maxRound = cachedData ? cachedData.maxRound : 4;
-
-      rankings.forEach(item => {
-        let barSegmentsHtml = "";
-        
-        for (let r = 1; r <= maxRound; r++) {
-          const rScore = item.roundDetails[`R${r}`] || 0;
-          if (rScore > 0 && item.totalScore > 0) {
-            const percentInTeam = (rScore / item.totalScore) * 100;
-            const colorClass = r === 1 ? 'r-color-1' : r === 2 ? 'r-color-2' : r === 3 ? 'r-color-3' : r === 4 ? 'r-color-4' : r === 5 ? 'r-color-5' : r === 6 ? 'r-color-6' : 'r-color-default';
-            barSegmentsHtml += `<div class="bar-segment ${colorClass}" style="width: ${percentInTeam}%" title="R${r}: ${rScore}点">R${r}:${rScore}</div>`;
-          }
-        }
-
-        const containerWidthPercent = (item.totalScore / maxTeamScore) * 100;
-
-        const chartRow = document.createElement("div");
-        chartRow.className = "chart-row";
-        chartRow.innerHTML = `
-          <div class="chart-axis-label">${item.teamName}</div>
-          <div class="chart-bar-area">
-            <div class="stacked-bar-container" style="width: ${containerWidthPercent}%;">
-              ${barSegmentsHtml || '<div style="color:#bbb; font-size:0.65rem; padding-left:5px;">未投球</div>'}
-            </div>
+      <!-- 💡【2段目】画面左端から右端までダイナミックに伸びる横棒 ＆ 右端に絶対固定される点数 -->
+      <div class="chart-bar-flex-group">
+        <div class="chart-bar-area">
+          <div class="stacked-bar-container" style="width: ${containerWidthPercent}%;">
+            ${barSegmentsHtml || '<div style="color: #444444; font-size: 0.95rem; font-weight: 900; padding-left: 8px; line-height: 28px;">未投球</div>'}
           </div>
-          <div class="chart-row-score">${item.totalScore}点</div>
-        `;
-        chartContainer.appendChild(chartRow);
-      });
+        </div>
+        <div class="chart-row-score">${item.totalScore || 0}点</div>
+      </div>
+    `;
+    chartContainer.appendChild(chartRow);
 
-      // ------------------------------------------
-      // ② チーム順位表 ＆ 詳細内訳のレンダリング（データ独立生成版）
-      // ------------------------------------------
-      rankings.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "rank-card";
-        
-        // 💡【バグ根絶の核心】個人順位データ(playerRankings)を一切見ず、
-        // チームデータ内の memberHistory から直接「選手名: R1 / R2...」のカーテンロールを組み立てる
-        let compactHistoryHtml = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">';
-        let hasData = false;
+  });
 
-        // 選手ごとに各ラウンドの得点を集約するためのテンポラリオブジェクト
-        const playerMapInTeam = {};
+  
+  // ------------------------------------------
+  // ② チーム順位表 ＆ 詳細内訳のレンダリング
+  // ------------------------------------------
+  rankings.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "rank-card";
+    
+    let playerMapInTeam = {};
+    let hasData = false;
 
-        if (item.memberHistory && typeof item.memberHistory === "object") {
-          // 各ラウンド（R1, R2, R3...）をループして選手名と得点を取り出す
-          Object.keys(item.memberHistory).sort().forEach(rKey => {
-            const rawString = item.memberHistory[rKey]; // 例: "周東佑京(43) / 柳田悠岐(42)"
-            if (!rawString) return;
+    if (item.memberHistory && typeof item.memberHistory === "object") {
+      Object.keys(item.memberHistory).sort().forEach(rKey => {
+        const rawString = item.memberHistory[rKey];
+        if (!rawString) return;
 
-            const players = rawString.split("/").map(p => p.trim());
-            players.forEach(player => {
-              if (!player) return;
-              const match = player.match(/^(.+?)\((.+?)\)$/);
-              if (match) {
-                const pName = match[1].trim();
-                const pScore = parseInt(match[2], 10) || 0;
+        const players = rawString.split("/").map(p => p.trim());
+        players.forEach(player => {
+          if (!player) return;
+          const match = player.match(/^(.+?)\((.+?)\)$/);
+          if (match && match[1] && match[2]) {
+            const pName = match[1].trim(); // [1]を追加
+            const pScore = parseInt(match[2], 10) || 0; // [2]を追加
 
-                if (!playerMapInTeam[pName]) {
-                  playerMapInTeam[pName] = { scores: [], total: 0, count: 0 };
-                }
-                // ラウンド（R1, R2）の順番に合わせて得点をストック
-                playerMapInTeam[pName].scores.push(pScore);
-                playerMapInTeam[pName].total += pScore;
-                playerMapInTeam[pName].count += 1;
-              }
-            });
-          });
-        }
-
-        // 組み立てた選手データを「選手名 ➔ 履歴: 43 / 44 / 45...」の1行ずつに変換してHTMLにする
-        Object.keys(playerMapInTeam).forEach(pName => {
-          hasData = true;
-          const pData = playerMapInTeam[pName];
-          const formattedHistory = pData.scores.join(" / "); // 横一列にスラッシュ区切り
-
-          compactHistoryHtml += `
-            <div class="player-row-in-team">
-              <span style="font-size: 0.85rem; font-weight: bold; color: #444;">${pName}</span>
-              <span style="font-size: 0.85rem; color: #666; font-weight: bold;">
-                <span style="color: #999; font-size: 0.75rem; font-weight: normal; margin-right: 4px;">履歴:</span>
-                ${formattedHistory}
-                <span style="color: #888; font-size: 0.75rem; font-weight: normal; margin-left: 4px;">(${pData.count}試合 / 計 ${pData.total}点)</span>
-              </span>
-            </div>
-          `;
-        });
-
-        compactHistoryHtml += '</div>';
-
-        if (!hasData) {
-          compactHistoryHtml = "<div style='padding:8px; color:#999;'>このチームの選手記録がまだ反映されていません。</div>";
-        }
-
-        // HTMLカードの生成
-        card.innerHTML = `
-          <div class="card-main-content">
-            <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
-            <div class="info-box">
-              <div class="name-main">${item.teamName}</div>
-              <div class="sub-detail">チーム No.${item.teamNo}</div>
-            </div>
-            <div class="score-box">
-              <span class="score-num">${item.totalScore}</span><span class="score-unit">点</span>
-            </div>
-          </div>
-          
-          <div class="member-history-panel" id="history-${item.teamNo}">
-            ${compactHistoryHtml}
-          </div>
-        `;
-
-        // タップしたときに「open」クラスを切り替えてスッと全開させる
-        card.addEventListener("click", () => {
-          const detailPanel = card.querySelector(".member-history-panel");
-          if (detailPanel) {
-            detailPanel.classList.toggle("open");
+            if (!playerMapInTeam[pName]) {
+              playerMapInTeam[pName] = { scores: [], total: 0, count: 0 };
+            }
+            playerMapInTeam[pName].scores.push(pScore);
+            playerMapInTeam[pName].total += pScore;
+            playerMapInTeam[pName].count += 1;
           }
         });
-
-        listContainer.appendChild(card);
       });
     }
+
+    let originalHistoryHtml = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">';
+    Object.keys(playerMapInTeam).forEach(pName => {
+      hasData = true;
+      const pData = playerMapInTeam[pName];
+      const formattedHistory = pData.scores.join(" / ");
+      
+      originalHistoryHtml += `
+        <div class="player-row-in-team" style="margin-bottom: 8px; padding: 4px 0; border-bottom: 1px dotted #ccc;">
+          <div style="font-size: 1.2rem; font-weight: 900; color: #111; margin-bottom: 2px;">
+            ${pName}
+          </div>
+          <div style="font-size: 1.1rem; color: #111; font-weight: bold; line-height: 1.4;">
+            <span style="color: #444; font-size: 1rem; font-weight: 900; margin-right: 6px; background: #eee; padding: 1px 5px; border-radius: 3px;">履歴</span>
+            <span style="font-size: 1.15rem; color: #000; letter-spacing: 0.5px;">${formattedHistory}</span>
+            <span style="color: #222; font-size: 1rem; font-weight: 900; margin-left: 8px; display: inline-block;">
+              (${pData.count}試合 / 計 <span style="color: #008f00; font-size: 1.1rem;">${pData.total}点</span>)
+            </span>
+          </div>
+        </div>`;
+    });
+    originalHistoryHtml += '</div>';
+
+    if (!hasData) {
+      originalHistoryHtml = "<div style='padding:8px; font-weight:bold; color:#666;'>このチームの選手記録がまだ反映されていません。</div>";
+    }
+
+    // コンパクトな一覧表（Table）の作成
+    let compactTableHtml = `
+      <div class="sm-table-container" style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 12px;">
+        <div style="font-size: 1.1rem; font-weight: 900; color: #111; margin-bottom: 6px;">📊 チーム回戦別履歴確認表</div>
+        <table class="sm-table">
+          <thead>
+            <tr>
+              <th style="width: 25%;">チーム</th>
+              <th style="width: 10%;">回</th>
+              <th style="width: 20%;">合計</th>
+              <th style="width: 45%;">5人の内訳</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    if (item.memberHistory && typeof item.memberHistory === "object") {
+      for (let r = 1; r <= maxRound; r++) {
+        const roundKey = `R${r}`;
+        const roundScore = item.roundDetails[roundKey] !== undefined ? item.roundDetails[roundKey] : "-";
+        const rawString = item.memberHistory[roundKey] || "";
+
+        let scoreOnlyLine = "-";
+        if (rawString) {
+          const scores = [];
+          const regex = /\(([^)]+)\)/g;
+          let match;
+          while ((match = regex.exec(rawString)) !== null) {
+            if (match && match[1]) {
+              scores.push(match[1].trim());
+            }
+          }
+          if (scores.length > 0) {
+            scoreOnlyLine = scores.join('/');
+          }
+        }
+
+        compactTableHtml += `
+          <tr>
+            <td class="col-bold" style="text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:70px;">${item.teamName || '不明'}</td>
+            <td>${r}</td>
+            <td class="col-score">${roundScore}${typeof roundScore === 'number' ? '点' : ''}</td>
+            <td class="col-nums" style="white-space: nowrap;">${scoreOnlyLine}</td>
+          </tr>
+        `;
+      }
+    }
+
+    compactTableHtml += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    // 💡【安全ガード】順位フォーマット関数の未定義対策
+    let rankClass = "rank-default";
+    let rankText = item.rank || "-";
+    try {
+      if (typeof getRankClass === "function") rankClass = getRankClass(item.rank);
+      if (typeof getRankFormat === "function") rankText = getRankFormat(item.rank);
+    } catch(e) {}
+
+    card.innerHTML = `
+      <div class="card-main-content">
+        <div class="rank-num ${rankClass}">${rankText}</div>
+        <div class="info-box">
+          <div class="name-container">
+            <span class="team-tag">${item.teamName || '不明'}</span>
+          </div>
+        </div>
+        <div class="score-box">
+          <span class="score-num">${item.totalScore || 0}</span>
+          <span class="score-unit">点</span>
+        </div>
+      </div>
+      
+      <div class="member-history-panel" id="panel-team-${item.teamNo || item.teamName || 'unknown'}">
+        <div style="font-size: 1.1rem; font-weight: 900; color: #000; margin-bottom: 8px; border-left: 5px solid #008f00; padding-left: 8px;">👤 チーム内個人の総合成績</div>
+        ${originalHistoryHtml}
+        ${compactTableHtml}
+      </div>
+    `;
+
+    card.addEventListener("click", () => {
+      const panel = card.querySelector(".member-history-panel");
+      if (panel) {
+        panel.classList.toggle("open");
+      }
+    });
+
+    listContainer.appendChild(card);
+  });
+}
+
 
     /**
      * 個人別ランキングのレンダリング
@@ -373,23 +625,50 @@
         const card = document.createElement("div");
         card.className = "rank-card";
         card.style.cursor = "default";
-        card.innerHTML = `
-          <div class="card-main-content">
-            <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
-            <div class="info-box">
-              <div class="name-container">
-                <span class="name-main">${item.playerName}</span>
-                <span class="team-tag">${item.teamName}</span>
-              </div>
-              <div class="sub-detail" style="margin-top: 4px;">
-                履歴: ${item.historyStr || "なし"} (${item.gameCount || 0}試合)
-              </div>
-            </div>
-            <div class="score-box">
-              <span class="score-num">${item.totalScore}</span><span class="score-unit">点</span>
-            </div>
+
+    // 💡【不具合①完全修正】個人順位では、所属がハッキリ分かる「チーム名」を確実に引き出す
+    const displayTeamName = item.teamName || (item.teamNo ? "チーム" + item.teamNo : '不明');
+
+    // 💡【不具合②対策】スラッシュ「 / 」の前後の余白を完全に消去して「/」に詰める処理
+    let cleanHistory = item.historyStr || '-';
+    if (typeof cleanHistory === "string") {
+      cleanHistory = cleanHistory.replace(/\s*\/\s*/g, "/"); // 前後のスペースを完全に排除
+    }
+
+    // 個人順位のカードの中身を生成
+    card.innerHTML = `
+      <div class="card-main-content">
+        <!-- 🥇 順位（巨大メダル・これまで通り） -->
+        <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
+        
+        <!-- 👤 中央の選手情報・履歴エリア -->
+        <div class="info-box">
+          <!-- 1. 選手名 と 💡フル表記のチーム名バッジ -->
+          <div class="name-container">
+            <span class="name-main">${item.playerName || '不明'}</span>
+            <span class="team-tag">${displayTeamName}</span>
           </div>
-        `;
+          
+          <!-- 2. 💡【上段】余った「履歴」と「試合数」の文字を上に配置 -->
+          <div style="font-size: 1.05rem; color: #444; font-weight: 900; margin-top: 4px; margin-bottom: 2px; line-height: 1;">
+            履歴 (${item.gameCount || (item.roundDetails ? Object.keys(item.roundDetails).length : 0)} 試合)
+          </div>
+          
+          <!-- 3. 💡【下段】スペースを排除し、5試合分でも絶対にオーバーフローしない極限文字詰め -->
+          <div style="font-size: 1.25rem; color: #000; font-weight: 900; letter-spacing: -0.5px; line-height: 1.2; white-space: nowrap;">
+            ${cleanHistory}
+          </div>
+        </div>
+        
+        <!-- 🎯 右端の合計点数表示（極太大文字・これまで通り） -->
+        <div class="score-box">
+          <span class="score-num">${item.totalScore || 0}</span>
+          <span class="score-unit">点</span>
+        </div>
+      </div>
+    `;
+
+
         panel.appendChild(card);
       });
     }
