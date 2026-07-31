@@ -413,7 +413,7 @@
      `;
      chartContainer.appendChild(chartRow);
    });
-   rankings.forEach(item => {
+    rankings.forEach(item => {
      const card = document.createElement("div");
      card.className = "rank-card";
      
@@ -440,6 +440,7 @@
          });
        });
      }
+
      let originalHistoryHtml = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">';
      Object.keys(playerMapInTeam).forEach(pName => {
        hasData = true;
@@ -456,6 +457,7 @@
      });
      originalHistoryHtml += '</div>';
      if (!hasData) originalHistoryHtml = "<div style='padding:8px; font-weight:bold; color:#666;'>記録がありません。</div>";
+
      let compactTableHtml = `
        <div class="sm-table-container" style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 12px;">
          <div style="font-size: 1.1rem; font-weight: 900; color: #111; margin-bottom: 6px;"> チーム回戦別履歴確認表</div>
@@ -465,6 +467,7 @@
            </thead>
            <tbody>
      `;
+
      if (item.memberHistory && typeof item.memberHistory === "object") {
        for (let r = 1; r <= maxRound; r++) {
          const roundKey = `R${r}`;
@@ -490,6 +493,7 @@
        }
      }
      compactTableHtml += `</tbody></table></div>`;
+
      card.innerHTML = `
        <div class="card-main-content">
          <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
@@ -509,6 +513,7 @@
      listContainer.appendChild(card);
    });
  }
+
  function renderPlayerRanking(rankings) {
    const panel = document.getElementById("player-panel");
    panel.innerHTML = "";
