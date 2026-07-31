@@ -3,10 +3,7 @@
 <head>
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>輪投げ大会</title>
- <link rel="apple-touch-icon" href="icon.png?v=5"> 
- <link rel="icon" type="image/png" sizes="192x192" href="icon.png?v=5"> 
- <meta name="apple-mobile-web-app-title" content="輪投げ大会"> 
+ <title>輪投げ大会 最終成績</title>
  <style>
  :root { 
  --primary-color: #008f00; 
@@ -15,567 +12,146 @@
  --card-bg: #ffffff; 
  }
  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; }
- 
- body { 
- background-color: var(--bg-color); 
- color: var(--secondary-color); 
- padding-bottom: 40px; 
- font-size: 1.15rem; 
- line-height: 1.5;
- }
+ body { background-color: var(--bg-color); color: var(--secondary-color); padding-bottom: 40px; font-size: 1.15rem; line-height: 1.5; }
  header { background: linear-gradient(135deg, var(--primary-color), #007700); color: white; padding: 18px 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.15); }
  h1 { font-size: 1.6rem; font-weight: 900; margin-bottom: 0px; }
- 
- .tabs { 
- display: flex; 
- background: white; 
- margin: 15px 0; 
- border-radius: 0; 
- overflow: hidden; 
- box-shadow: 0 3px 6px rgba(0,0,0,0.1); 
- width: 100%; 
- border-left: none;
- border-right: none;
- border-top: 1px solid #ccc;
- border-bottom: 1px solid #ccc;
- }
+ .tabs { display: flex; background: white; margin: 15px 0; border-radius: 0; overflow: hidden; box-shadow: 0 3px 6px rgba(0,0,0,0.1); width: 100%; border: none; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; }
  .tab-btn { flex: 1; width: 50%; padding: 16px 10px; text-align: center; background: none; border: none; font-size: 1.25rem; font-weight: 900; color: #444; cursor: pointer; display: block;}
  .tab-btn.active { background-color: var(--primary-color) !important; color: white !important;}
- 
  .container { padding: 0; }
  .content-panel { display: none; }
  .content-panel.active { display: block; }
- .rank-card { 
- background: var(--card-bg); 
- border-radius: 0; 
- padding: 18px 15px; 
- margin-bottom: 10px; 
- border: none; 
- border-bottom: 1px solid #e5e7eb; 
- box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); 
- cursor: pointer; 
- width: 100%;
- }
+ .rank-card { background: var(--card-bg); border-radius: 0; padding: 18px 15px; margin-bottom: 10px; border: none; border-bottom: 1px solid #e5e7eb; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); width: 100%; }
  .card-main-content { display: flex; align-items: center; }
- 
- .rank-num { 
- font-size: 1.6rem; 
- font-weight: 900; 
- min-width: 55px; 
- max-width: 55px;
- height: 55px;
- line-height: 51px; 
- text-align: center; 
- margin-right: 15px; 
- color: #333; 
- background: #e6e6e6; 
- border-radius: 50%;
- border: 2px solid #ccc;
- }
-.rank-1 { background: linear-gradient(135deg, #ffd700, #ffa500); color: #000000; font-size: 2.1rem; border: 3px solid #b58600; box-shadow: inset 0 2px 4px rgba(255,255,255,0.4); }
-.rank-2 { background: linear-gradient(135deg, #f0f0f0, #b0b0b0); color: #000000; border: 3px solid #777;}
-.rank-3 { background: linear-gradient(135deg, #f4a460, #cd7f32); color: #000000; border: 3px solid #8b4513;}
+ .rank-num { font-size: 1.6rem; font-weight: 900; min-width: 55px; max-width: 55px; height: 55px; line-height: 51px; text-align: center; margin-right: 15px; color: #333; background: #e6e6e6; border-radius: 50%; border: 2px solid #ccc; }
+ .rank-1 { background: linear-gradient(135deg, #ffd700, #ffa500); color: #000000; font-size: 2.1rem; border: 3px solid #b58600; box-shadow: inset 0 2px 4px rgba(255,255,255,0.4); }
+ .rank-2 { background: linear-gradient(135deg, #f0f0f0, #b0b0b0); color: #000000; border: 3px solid #777;}
+ .rank-3 { background: linear-gradient(135deg, #f4a460, #cd7f32); color: #000000; border: 3px solid #8b4513;}
  .info-box { flex: 1; }
  .name-main { font-size: 1.4rem; font-weight: 900; color: #000000; line-height: 1.4; }
  .name-container { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
- 
- .team-tag { 
- font-size: 1.05rem;
- color: #000000 !important; 
- background-color: #ffe082 !important; 
- padding: 4px 14px; 
- border-radius: 20px; 
- font-weight: 900 !important; 
- border: 2px solid #000000; 
- }
- 
- .sub-detail { font-size: 1.05rem; font-weight: bold; color: #444; white-space: normal; word-break: break-all; line-height: 1.5; }
+ .team-tag { font-size: 1.05rem; color: #000000 !important; background-color: #ffe082 !important; padding: 4px 14px; border-radius: 20px; font-weight: 900 !important; border: 2px solid #000000; }
  .score-box { text-align: right; min-width: 85px; }
  .score-num { font-size: 1.8rem; font-weight: 900; color: var(--primary-color); } 
  .score-unit { font-size: 1rem; font-weight: bold; color: #333; margin-left: 1px; }
-
- .chart-card { 
- background: var(--card-bg); 
- border-radius: 0; 
- padding: 18px 15px; 
- margin-bottom: 15px; 
- box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
- border: none;
- border-bottom: 1px solid #e5e7eb;
- width: 100%;
- }
+ .chart-card { background: var(--card-bg); border-radius: 0; padding: 18px 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: none; border-bottom: 1px solid #e5e7eb; width: 100%; }
  .chart-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 14px; color: #111; border-left: 6px solid var(--primary-color); padding-left: 10px; }
- .chart-row { display: block; margin-bottom: 4px; width: 100%; }
- .chart-axis-label { width: 100% !important; max-width: none !important; min-width: 0 !important; font-weight: 900; font-size: 1.0rem; color: #000000; text-align: left; margin-bottom: 0px; padding-left: 2px; line-height: 1.1; }
+ .chart-row { display: block; margin-bottom: 12px; width: 100%; }
+ .chart-axis-label { width: 100%; font-weight: 900; font-size: 1.0rem; color: #000000; text-align: left; margin-bottom: 2px; }
  .chart-bar-flex-group { display: flex; align-items: center; width: 100%; height: 30px; }
- .chart-bar-area { flex: 1; position: relative; width: 0; }
- .stacked-bar-container { background: #dddddd; border-radius: 4px; overflow: hidden; display: flex; height: 24px; width: 100%; border: 0px solid #333; background-image: linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.05) 100%);}
- .chart-row-score { min-width: 70px; text-align: right; padding-left: 6px; font-weight: 900; font-size: 1.3rem; color: var(--primary-color); line-height: 30px; }
- 
+ .chart-bar-area { flex: 1; position: relative; }
+ .stacked-bar-container { background: #dddddd; border-radius: 4px; overflow: hidden; display: flex; height: 24px; }
+ .bar-segment { height: 100%; }
+ .chart-row-score { min-width: 70px; text-align: right; padding-left: 6px; font-weight: 900; font-size: 1.3rem; color: var(--primary-color); }
  .r-color-1 { background-color: #00BFFF; } 
  .r-color-2 { background-color: #FF3AD8; } 
  .r-color-3 { background-color: #29FF14; } 
  .r-color-4 { background-color: #FF1437; } 
  .r-color-5 { background-color: #A632FF; } 
- .r-color-6 { background-color: #FFCD28; } 
- .r-color-default { background-color: #4b5563; }
- .member-history-panel { display: none; margin-top: 12px; padding: 10px; border-top: 2px dashed #999; background: #fdfdfd; border-radius: 6px; height: auto !important; max-height: none !important; overflow: visible !important; }
- .member-history-panel.open { display: block !important; }
-
- .sm-table-container { width: 100%; overflow-x: auto; margin-top: 8px; border: 1px solid #999; border-radius: 4px; }
- .sm-table { width: 100%; border-collapse: collapse; font-size: 1.05rem; }
- .sm-table th, .sm-table td { padding: 8px 6px; border: 2px solid #666666; text-align: center; vertical-align: middle; color: #000000; }
- .sm-table th { background-color: #d5d5d5; font-weight: 900; color: #000000; }
- .sm-table td.col-bold { font-weight: 900; }
- .sm-table td.col-score { font-weight: 900; color: #c2185b; text-align: right; padding-right: 6px; font-size: 1.15rem; }
- .sm-table td.col-nums { font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: bold; color: #000; font-size: 1.1rem; }
  </style>
 </head>
 <body>
  <header>
- <h1 id="tournament-name">第11回 砧高協輪投げ大会</h1>
+   <h1>第11回 砧高協輪投げ大会</h1>
  </header>
  <div class="tabs">
- <button class="tab-btn active" id="tab-team">チーム順位</button>
- <button class="tab-btn" id="tab-player">個人順位</button>
+   <button class="tab-btn active" onclick="switchTab('team')">チーム順位</button>
+   <button class="tab-btn" onclick="switchTab('player')">個人順位</button>
  </div>
  <div class="container">
- <div id="team-panel" class="content-panel active">
- <div id="team-chart-container" class="chart-card"></div>
- <div id="team-list-container"></div>
- </div>
- <div id="player-panel" class="content-panel"></div>
+   <!-- チーム順位パネル -->
+   <div id="team-panel" class="content-panel active">
+     <div class="chart-card">
+       <div class="chart-title">チーム総得点 最終結果</div>
+       <div class="chart-row">
+         <div class="chart-axis-label">1位：千歳会A (489点)</div>
+         <div class="chart-bar-flex-group"><div class="chart-bar-area"><div class="stacked-bar-container" style="width:100%;"><div class="bar-segment r-color-1" style="width:17.4%"></div><div class="bar-segment r-color-2" style="width:12.7%"></div><div class="bar-segment r-color-3" style="width:17.8%"></div><div class="bar-segment r-color-4" style="width:30.9%"></div><div class="bar-segment r-color-5" style="width:21.2%"></div></div></div><div class="chart-row-score">489点</div></div>
+       </div>
+       <div class="chart-row">
+         <div class="chart-axis-label">2位：みずき会A (453点)</div>
+         <div class="chart-bar-flex-group"><div class="chart-bar-area"><div class="stacked-bar-container" style="width:92.6%;"><div class="bar-segment r-color-1" style="width:21%"></div><div class="bar-segment r-color-2" style="width:23.8%"></div><div class="bar-segment r-color-3" style="width:13.2%"></div><div class="bar-segment r-color-4" style="width:19%"></div><div class="bar-segment r-color-5" style="width:23%"></div></div></div><div class="chart-row-score">453点</div></div>
+       </div>
+       <div class="chart-row">
+         <div class="chart-axis-label">3位：千歳会B (367点)</div>
+         <div class="chart-bar-flex-group"><div class="chart-bar-area"><div class="stacked-bar-container" style="width:75%;"><div class="bar-segment r-color-1" style="width:20.4%"></div><div class="bar-segment r-color-2" style="width:18.3%"></div><div class="bar-segment r-color-3" style="width:25.9%"></div><div class="bar-segment r-color-4" style="width:18%"></div><div class="bar-segment r-color-5" style="width:17.4%"></div></div></div><div class="chart-row-score">367点</div></div>
+       </div>
+       <div class="chart-row">
+         <div class="chart-axis-label">4位：光寿会 (272点)</div>
+         <div class="chart-bar-flex-group"><div class="chart-bar-area"><div class="stacked-bar-container" style="width:55.6%;"><div class="bar-segment r-color-1" style="width:25%"></div><div class="bar-segment r-color-2" style="width:14.3%"></div><div class="bar-segment r-color-3" style="width:13.2%"></div><div class="bar-segment r-color-4" style="width:24.6%"></div><div class="bar-segment r-color-5" style="width:22.8%"></div></div></div><div class="chart-row-score">272点</div></div>
+       </div>
+       <div class="chart-row">
+         <div class="chart-axis-label">5位：千歳廻寿会 (265点)</div>
+         <div class="chart-bar-flex-group"><div class="chart-bar-area"><div class="stacked-bar-container" style="width:54.2%;"><div class="bar-segment r-color-1" style="width:21.9%"></div><div class="bar-segment r-color-2" style="width:15.8%"></div><div class="bar-segment r-color-3" style="width:26.8%"></div><div class="bar-segment r-color-4" style="width:14.7%"></div><div class="bar-segment r-color-5" style="width:20.8%"></div></div></div><div class="chart-row-score">265点</div></div>
+       </div>
+       <div class="chart-row">
+         <div class="chart-axis-label">6位：上北沢幸友会 (248点)</div>
+         <div class="chart-bar-flex-group"><div class="chart-bar-area"><div class="stacked-bar-container" style="width:50.7%;"><div class="bar-segment r-color-1" style="width:17.3%"></div><div class="bar-segment r-color-2" style="width:23%"></div><div class="bar-segment r-color-3" style="width:23.8%"></div><div class="bar-segment r-color-4" style="width:20.6%"></div><div class="bar-segment r-color-5" style="width:15.3%"></div></div></div><div class="chart-row-score">248点</div></div>
+       </div>
+       <div class="chart-row">
+         <div class="chart-axis-label">7位：成城若葉会 (243点)</div>
+         <div class="chart-bar-flex-group"><div class="chart-bar-area"><div class="stacked-bar-container" style="width:49.7%;"><div class="bar-segment r-color-1" style="width:19.8%"></div><div class="bar-segment r-color-2" style="width:29.2%"></div><div class="bar-segment r-color-3" style="width:25.5%"></div><div class="bar-segment r-color-4" style="width:16.9%"></div><div class="bar-segment r-color-5" style="width:8.6%"></div></div></div><div class="chart-row-score">243点</div></div>
+       </div>
+       <div class="chart-row">
+         <div class="chart-axis-label">8位：日の丸会 (215点)</div>
+         <div class="chart-bar-flex-group"><div class="chart-bar-area"><div class="stacked-bar-container" style="width:44%;"><div class="bar-segment r-color-1" style="width:27.4%"></div><div class="bar-segment r-color-2" style="width:25.1%"></div><div class="bar-segment r-color-3" style="width:21.4%"></div><div class="bar-segment r-color-4" style="width:6%"></div><div class="bar-segment r-color-5" style="width:20.1%"></div></div></div><div class="chart-row-score">215点</div></div>
+       </div>
+       <div class="chart-row">
+         <div class="chart-axis-label">9位：七福会 (203点)</div>
+         <div class="chart-bar-flex-group"><div class="chart-bar-area"><div class="stacked-bar-container" style="width:41.5%;"><div class="bar-segment r-color-1" style="width:11.8%"></div><div class="bar-segment r-color-2" style="width:23.2%"></div><div class="bar-segment r-color-3" style="width:26.1%"></div><div class="bar-segment r-color-4" style="width:12.3%"></div><div class="bar-segment r-color-5" style="width:26.6%"></div></div></div><div class="chart-row-score">203点</div></div>
+       </div>
+     </div>
+   </div>
+      <!-- 個人順位パネル -->
+   <div id="player-panel" class="content-panel">
+     <script>
+       const playerPanelHtml = `
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num rank-1">🥇</div><div class="info-box"><div class="name-container"><span class="name-main">7-第4投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 17 / 32 / 27 / 21 / 29 (5試合)</div></div><div class="score-box"><span class="score-num">126</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num rank-2">🥈</div><div class="info-box"><div class="name-container"><span class="name-main">3-第1投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 18 / 20 / 27 / 29 / 21 (5試合)</div></div><div class="score-box"><span class="score-num">115</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num rank-3">🥉</div><div class="info-box"><div class="name-container"><span class="name-main">4-第2投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:0.95rem;color:#555;">履歴: 17 / 16 / 31 / 35 / 11 (5試合)</div></div><div class="score-box"><span class="score-num">110</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">4位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第4投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 16 / 13 / 14 / 35 / 31 (5試合)</div></div><div class="score-box"><span class="score-num">109</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">5位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第3投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 8 / 19 / 22 / 32 / 18 (5試合)</div></div><div class="score-box"><span class="score-num">99</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">6位</div><div class="info-box"><div class="name-container"><span class="name-main">7-第1投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 10 / 15 / 5 / 30 / 35 (5試合)</div></div><div class="score-box"><span class="score-num">95</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">7位</div><div class="info-box"><div class="name-container"><span class="name-main">5-第1投者</span><span class="team-tag">千歳廻寿会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 34 / 20 / 20 / 14 / 5 (5試合)</div></div><div class="score-box"><span class="score-num">93</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">8位</div><div class="info-box"><div class="name-container"><span class="name-main">7-第3投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 34 / 23 / 9 / 13 / 13 (5試合)</div></div><div class="score-box"><span class="score-num">92</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">9位</div><div class="info-box"><div class="name-container"><span class="name-main">2-第5投者</span><span class="team-tag">日の丸会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 32 / 28 / 8 / 0 / 23 (5試合)</div></div><div class="score-box"><span class="score-num">91</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">10位</div><div class="info-box"><div class="name-container"><span class="name-main">1-第5投者</span><span class="team-tag">成城若葉会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 17 / 24 / 20 / 13 / 11 (5試合)</div></div><div class="score-box"><span class="score-num">85</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">11位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第5投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 27 / 3 / 14 / 20 / 19 (5試合)</div></div><div class="score-box"><span class="score-num">83</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">12位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第2投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 16 / 7 / 10 / 35 / 15 (5試合)</div></div><div class="score-box"><span class="score-num">83</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">13位</div><div class="info-box"><div class="name-container"><span class="name-main">4-第5投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:0.95rem;color:#555;">履歴: 24 / 18 / 25 / 0 / 15 (5試合)</div></div><div class="score-box"><span class="score-num">82</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">14位</div><div class="info-box"><div class="name-container"><span class="name-main">7-第2投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 19 / 8 / 9 / 22 / 6 (5試合)</div></div><div class="score-box"><span class="score-num">80</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">15位</div><div class="info-box"><div class="name-container"><span class="name-main">4-第3投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:0.95rem;color:#555;">履歴: 9 / 16 / 20 / 17 / 8 (5試合)</div></div><div class="score-box"><span class="score-num">76</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">16位</div><div class="info-box"><div class="name-container"><span class="name-main">4-第1投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:0.95rem;color:#555;">履歴: 5 / 10 / 4 / 6 / 9 (5試合)</div></div><div class="score-box"><span class="score-num">70</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">17位</div><div class="info-box"><div class="name-container"><span class="name-main">9-第5投者</span><span class="team-tag">光寿会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 21 / 2 / 8 / 1 / 9 (5試合)</div></div><div class="score-box"><span class="score-num">68</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">18位</div><div class="info-box"><div class="name-container"><span class="name-main">9-第1投者</span><span class="team-tag">光寿会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 15 / 9 / 11 / 24 / 13 (5試合)</div></div><div class="score-box"><span class="score-num">64</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">19位</div><div class="info-box"><div class="name-container"><span class="name-main">1-第1投者</span><span class="team-tag">成城若葉会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 9 / 25 / 15 / 20 / 1 (5試合)</div></div><div class="score-box"><span class="score-num">61</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">20位</div><div class="info-box"><div class="name-container"><span class="name-main">5-第2投者</span><span class="team-tag">千歳廻寿会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 17 / 11 / 28 / 12 / 13 (5試合)</div></div><div class="score-box"><span class="score-num">61</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">21位</div><div class="info-box"><div class="name-container"><span class="name-main">9-第2投者</span><span class="team-tag">光寿会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 11 / 14 / 12 / 18 / 20 (5試合)</div></div><div class="score-box"><span class="score-num">58</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">22位</div><div class="info-box"><div class="name-container"><span class="name-main">8-第5投者</span><span class="team-tag">七福会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 9 / 25 / 7 / 12 / 19 (5試合)</div></div><div class="score-box"><span class="score-num">57</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">23位</div><div class="info-box"><div class="name-container"><span class="name-main">2-第2投者</span><span class="team-tag">日の丸会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 17 / 0 / 7 / 1 / 0 (5試合)</div></div><div class="score-box"><span class="score-num">56</span><span class="score-unit">点</span></div></div></div>
+`;
+       document.getElementById('player-panel').innerHTML = playerPanelHtml;
+     </script>
+   </div>
  </div>
 
  <script>
- const cachedData = {
-  "tournamentName": "第11回 砧高協輪投げ大会",
-  "maxRound": 5,
-  "teamRankings": [
-    {
-      "teamNo": 3,
-      "teamName": "千歳会A",
-      "totalScore": 489,
-      "roundDetails": {"R1": 85, "R2": 62, "R3": 87, "R4": 151, "R5": 104},
-      "memberHistory": {
-        "R1": "3-第1投者(18)/3-第2投者(16)/3-第3投者(8)/3-第4投者(16)/3-第5投者(27)",
-        "R2": "3-第1投者(20)/3-第2投者(7)/3-第3投者(19)/3-第4投者(13)/3-第5投者(3)",
-        "R3": "3-第1投者(27)/3-第2投者(10)/3-第3投者(22)/3-第4投者(14)/3-第5投者(14)",
-        "R4": "3-第1投者(29)/3-第2投者(35)/3-第3投者(32)/3-第4投者(35)/3-第5投者(20)",
-        "R5": "3-第1投者(21)/3-第2投者(15)/3-第3投者(18)/3-第4投者(31)/3-第5投者(19)"
-      },
-      "roundList":,
-      "rank": 1
-    },
-    {
-      "teamNo": 7,
-      "teamName": "みずき会A",
-      "totalScore": 453,
-      "roundDetails": {"R1": 95, "R2": 108, "R3": 60, "R4": 86, "R5": 104},
-      "memberHistory": {
-        "R1": "7-第1投者(10)/7-第2投者(19)/7-第3投者(34)/7-第4投者(17)/7-第5投者(15)",
-        "R2": "7-第1投者(15)/7-第2投者(8)/7-第3投者(23)/7-第4投者(32)/7-第5投者(30)",
-        "R3": "7-第1投者(5)/7-第2投者(9)/7-第3投者(9)/7-第4投者(27)/7-第5投者(10)",
-        "R4": "7-第1投者(30)/7-第2投者(22)/7-第3投者(13)/7-第4投者(21)/7-第5投者(0)",
-        "R5": "7-第1投者(35)/7-第2投者(6)/7-第3投者(13)/7-第4投者(29)/7-第5投者(21)"
-      },
-      "roundList":,
-      "rank": 2
-    },
-    {
-      "teamNo": 4,
-      "teamName": "千歳会B",
-      "totalScore": 367,
-      "roundDetails": {"R1": 75, "R2": 67, "R3": 95, "R4": 66, "R5": 64},
-      "memberHistory": {
-        "R1": "4-第1投者(5)/4-第2投者(17)/4-第3投者(9)/4-第4投者(20)/4-第5投者(24)",
-        "R2": "4-第1投者(10)/4-第2投者(16)/4-第3投者(16)/4-第4投者(7)/4-第5投者(18)",
-        "R3": "4-第1投者(4)/4-第2投者(31)/4-第3投者(20)/4-第4投者(15)/4-第5投者(25)",
-        "R4": "4-第1投者(6)/4-第2投者(35)/4-第3投者(17)/4-第4投者(8)/4-第5投者(0)",
-        "R5": "4-第1投者(9)/4-第2投者(11)/4-第3投者(8)/4-第4投者(21)/4-第5投者(15)"
-      },
-      "roundList":,
-      "rank": 3
-    },
-    {
-      "teamNo": 9,
-      "teamName": "光寿会",
-      "totalScore": 272,
-      "roundDetails": {"R1": 68, "R2": 39, "R3": 36, "R4": 67, "R5": 62},
-      "memberHistory": {
-        "R1": "9-第1投者(15)/9-第2投者(11)/9-第3投者(7)/9-第4投者(14)/9-第5投者(21)",
-        "R2": "9-第1投者(9)/9-第2投者(14)/9-第3投者(7)/9-第4投者(7)/9-第5投者(2)",
-        "R3": "9-第1投者(11)/9-第2投者(12)/9-第3投者(5)/9-第4投者(0)/9-第5投者(8)",
-        "R4": "9-第1投者(24)/9-第2投者(18)/9-第3投者(8)/9-第4投者(16)/9-第5投者(1)",
-        "R5": "9-第1投者(13)/9-第2投者(20)/9-第3投者(13)/9-第4投者(7)/9-第5投者(9)"
-      },
-      "roundList":,
-      "rank": 4
-    },
-    {
-      "teamNo": 5,
-      "teamName": "千歳廻寿会",
-      "totalScore": 265,
-      "roundDetails": {"R1": 58, "R2": 42, "R3": 71, "R4": 39, "R5": 55},
-      "memberHistory": {
-        "R1": "5-第1投者(34)/5-第2投者(17)/5-第3投者(0)/5-第4投者(0)/5-第5投者(7)",
-        "R2": "5-第1投者(20)/5-第2投者(11)/5-第3投者(1)/5-第4投者(0)/5-第5投者(10)",
-        "R3": "5-第1投者(20)/5-第2投者(28)/5-第3投者(16)/5-第4投者(1)/5-第5投者(6)",
-        "R4": "5-第1投者(14)/5-第2投者(12)/5-第3投者(6)/5-第4投者(7)/5-第5投者(0)",
-        "R5": "5-第1投者(5)/5-第2投者(13)/5-第3投者(12)/5-第4投者(8)/5-第5投者(17)"
-      },
-      "roundList":,
-      "rank": 5
-    },
-    {
-      "teamNo": 6,
-      "teamName": "上北沢幸友会",
-      "totalScore": 248,
-      "roundDetails": {"R1": 43, "R2": 57, "R3": 59, "R4": 51, "R5": 38},
-      "memberHistory": {
-        "R1": "6-第1投者(12)/6-第2投者(7)/6-第3投者(7)/6-第4投者(4)/6-第5投者(13)",
-        "R2": "6-第1投者(20)/6-第2投者(0)/6-第3投者(22)/6-第4投者(9)/6-第5投者(6)",
-        "R3": "6-第1投者(5)/6-第2投者(24)/6-第3投者(6)/6-第4投者(7)/6-第5投者(17)",
-        "R4": "6-第1投者(24)/6-第2投者(1)/6-第3投者(12)/6-第4投者(13)/6-第5投者(1)",
-        "R5": "6-第1投者(11)/6-第2投者(12)/6-第3投者(2)/6-第4投者(6)/6-第5投者(7)"
-      },
-      "roundList":,
-      "rank": 6
-    },
-    {
-      "teamNo": 1,
-      "teamName": "成城若葉会",
-      "totalScore": 243,
-      "roundDetails": {"R1": 48, "R2": 71, "R3": 62, "R4": 41, "R5": 21},
-      "memberHistory": {
-        "R1": "1-第1投者(9)/1-第2投者(1)/1-第3投者(10)/1-第4投者(11)/1-第5投者(17)",
-        "R2": "1-第1投者(25)/1-第2投者(4)/1-第3投者(10)/1-第4投者(8)/1-第5投者(24)",
-        "R3": "1-第1投者(15)/1-第2投者(0)/1-第3投者(21)/1-第4投者(6)/1-第5投者(20)",
-        "R4": "1-第1投者(20)/1-第2投者(4)/1-第3投者(3)/1-第4投者(1)/1-第5投者(13)",
-        "R5": "1-第1投者(1)/1-第2投者(4)/1-第3投者(0)/1-第4投者(5)/1-第5投者(11)"
-      },
-      "roundList":,
-      "rank": 7
-    },
-    {
-      "teamNo": 2,
-      "teamName": "日の丸会",
-      "totalScore": 215,
-      "roundDetails": {"R1": 59, "R2": 54, "R3": 46, "R4": 13, "R5": 43},
-      "memberHistory": {
-        "R1": "2-第1投者(4)/2-第2投者(17)/2-第3投者(0)/2-第4投者(6)/2-第5投者(32)",
-        "R2": "2-第1投者(17)/2-第2投者(0)/2-第3投者(0)/2-第4投者(9)/2-第5投者(28)",
-        "R3": "2-第1投者(9)/2-第2投者(7)/2-第3投者(9)/2-第4投者(13)/2-第5投者(8)",
-        "R4": "2-第1投者(10)/2-第2投者(1)/2-第3投者(0)/2-第4投者(2)/2-第5投者(0)",
-        "R5": "2-第1投者(13)/2-第2投者(0)/2-第3投者(0)/2-第4投者(7)/2-第5投者(23)"
-      },
-      "roundList":,
-      "rank": 8
-    },
-    {
-      "teamNo": 8,
-      "teamName": "七福会",
-      "totalScore": 203,
-      "roundDetails": {"R1": 24, "R2": 47, "R3": 53, "R4": 25, "R5": 54},
-      "memberHistory": {
-        "8-第1投者(10)/8-第2投者(5)/8-第3投者(0)/8-第4投者(0)/8-第5投者(9)",
-        "8-第1投者(14)/8-第2投者(6)/8-第3投者(0)/8-第4投者(2)/8-第5投者(25)",
-        "8-第1投者(3)/8-第2投者(20)/8-第3投者(8)/8-第4投者(15)/8-第5投者(7)",
-        "8-第1投者(1)/8-第2投者(2)/8-第3投者(8)/8-第4投者(2)/8-第5投者(12)",
-        "8-第1投者(9)/8-第2投者(1)/8-第3投者(16)/8-第4投者(9)/8-第5投者(19)"
-      },
-      "roundList":,
-      "rank": 9
-    }
-  ],
-  "playerRankings": [
-    { "rank": 1, "playerName": "7-第4投者", "teamName": "みずき会A", "totalScore": 126, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 17, "R2": 32, "R3": 27, "R4": 21, "R5": 29}, "historyStr": "17/32/27/21/29" },
-    { "rank": 2, "playerName": "3-第1投者", "teamName": "千歳会A", "totalScore": 115, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 18, "R2": 20, "R3": 27, "R4": 29, "R5": 21}, "historyStr": "18/20/27/29/21" },
-    { "rank": 3, "playerName": "4-第2投者", "teamName": "千歳会B", "totalScore": 110, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 17, "R2": 16, "R3": 31, "R4": 35, "R5": 11}, "historyStr": "17/16/31/35/11" },
-    { "rank": 4, "playerName": "3-第4投者", "teamName": "千歳会A", "totalScore": 109, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 16, "R2": 13, "R3": 14, "R4": 35, "R5": 31}, "historyStr": "16/13/14/35/31" },
-    { "rank": 5, "playerName": "3-第3投者", "teamName": "千歳会A", "totalScore": 99, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 8, "R2": 19, "R3": 22, "R4": 32, "R5": 18}, "historyStr": "8/19/22/32/18" },
-    { "rank": 6, "playerName": "7-第1投者", "teamName": "みずき会A", "totalScore": 95, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 10, "R2": 15, "R3": 5, "R4": 30, "R5": 35}, "historyStr": "10/15/5/30/35" },
-    { "rank": 7, "playerName": "5-第1投者", "teamName": "千歳廻寿会", "totalScore": 93, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 34, "R2": 20, "R3": 20, "R4": 14, "R5": 5}, "historyStr": "34/20/20/14/5" },
-    { "rank": 8, "playerName": "7-第3投者", "teamName": "みずき会A", "totalScore": 92, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 34, "R2": 23, "R3": 9, "R4": 13, "R5": 13}, "historyStr": "34/23/9/13/13" },
-    { "rank": 9, "playerName": "2-第5投者", "teamName": "日の丸会", "totalScore": 91, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 32, "R2": 28, "R3": 8, "R4": 0, "R5": 23}, "historyStr": "32/28/8/0/23" },
-    { "rank": 10, "playerName": "1-第5投者", "teamName": "成城若葉会", "totalScore": 85, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 17, "R2": 24, "R3": 20, "R4": 13, "R5": 11}, "historyStr": "17/24/20/13/11" },
-    { "rank": 11, "playerName": "3-第5投者", "teamName": "千歳会A", "totalScore": 83, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 27, "R2": 3, "R3": 14, "R4": 20, "R5": 19}, "historyStr": "27/3/14/20/19" },
-    { "rank": 12, "playerName": "3-第2投者", "teamName": "千歳会A", "totalScore": 83, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 16, "R2": 7, "R3": 10, "R4": 35, "R5": 15}, "historyStr": "16/7/10/35/15" },
-    { "rank": 13, "playerName": "4-第5投者", "teamName": "千歳会B", "totalScore": 82, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 24, "R2": 18, "R3": 25, "R4": 0, "R5": 15}, "historyStr": "24/18/25/0/15" },
-    { "rank": 14, "playerName": "7-第2投者", "teamName": "みずき会A", "totalScore": 80, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 19, "R2": 8, "R3": 9, "R4": 22, "R5": 6}, "historyStr": "19/8/9/22/6" },
-    { "rank": 15, "playerName": "4-第3投者", "teamName": "千歳会B", "totalScore": 76, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 9, "R2": 16, "R3": 20, "R4": 17, "R5": 8}, "historyStr": "9/16/20/17/8" },
-    { "rank": 16, "playerName": "4-第1投者", "teamName": "千歳会B", "totalScore": 70, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 5, "R2": 10, "R3": 4, "R4": 6, "R5": 9}, "historyStr": "5/10/4/6/9" },
-    { "rank": 17, "playerName": "9-第5投者", "teamName": "光寿会", "totalScore": 68, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 21, "·R2": 2, "R3": 8, "R4": 1, "R5": 9}, "historyStr": "21/2/8/1/9" },
-    { "rank": 18, "playerName": "9-第1投者", "teamName": "光寿会", "totalScore": 64, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 15, "R2": 9, "R3": 11, "R4": 24, "R5": 13}, "historyStr": "15/9/11/24/13" },
-    { "rank": 19, "playerName": "1-第1投者", "teamName": "成城若葉会", "totalScore": 61, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 9, "R2": 25, "R3": 15, "R4": 20, "R5": 1}, "historyStr": "9/25/15/20/1" },
-    { "rank": 20, "playerName": "5-第2投者", "teamName": "千歳廻寿会", "totalScore": 61, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 17, "R2": 11, "R3": 28, "R4": 12, "R5": 13}, "historyStr": "17/11/28/12/13" },
-    { "rank": 21, "playerName": "9-第2投者", "teamName": "光寿会", "totalScore": 58, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 11, "R2": 14, "R3": 12, "R4": 18, "R5": 20}, "historyStr": "11/14/12/18/20" },
-    { "rank": 22, "playerName": "8-第5投者", "teamName": "七福会", "totalScore": 57, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 9, "R2": 25, "R3": 7, "R4": 12, "R5": 19}, "historyStr": "9/25/7/12/19" },
-    { "rank": 23, "playerName": "2-第2投者", "teamName": "日の丸会", "totalScore": 56, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 17, "R2": 0, "R3": 7, "R4": 1, "R5": 0}, "historyStr": "17/0/7/1/0" },
-    { "rank": 24, "playerName": "7-第5投者", "teamName": "みずき会A", "totalScore": 56, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 15, "R2": 30, "R3": 10, "R4": 0, "R5": 21}, "historyStr": "15/30/10/0/21" },
-    { "rank": 25, "playerName": "6-第1投者", "teamName": "上北沢幸友会", "totalScore": 54, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 12, "R2": 20, "R3": 5, "R4": 24, "R5": 11}, "historyStr": "12/20/5/24/11" },
-    { "rank": 26, "playerName": "6-第2投者", "teamName": "上北沢幸友会", "totalScore": 53, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 7, "R2": 0, "R3": 24, "R4": 1, "R5": 12}, "historyStr": "7/0/24/1/12" },
-    { "rank": 27, "playerName": "2-第1投者", "teamName": "日の丸会", "totalScore": 50, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 4, "R2": 17, "R3": 9, "R4": 10, "R5": 13}, "historyStr": "4/17/9/10/13" },
-    { "rank": 28, "playerName": "6-第5投者", "teamName": "上北沢幸友会", "totalScore": 48, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 13, "R2": 6, "R3": 17, "R4": 1, "R5": 7}, "historyStr": "13/6/17/1/7" },
-    { "rank": 29, "playerName": "6-第3投者", "teamName": "上北沢幸友会", "totalScore": 47, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 7, "R2": 22, "R3": 6, "R4": 12, "R5": 2}, "historyStr": "7/22/6/12/2" },
-    { "rank": 30, "playerName": "6-第4投者", "teamName": "上北沢幸友会", "totalScore": 46, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 4, "R2": 9, "R3": 7, "R4": 13, "R5": 6}, "historyStr": "4/9/7/13/6" },
-    { "rank": 31, "playerName": "9-第4投者", "teamName": "光寿会", "totalScore": 44, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 14, "R2": 7, "R3": 0, "R4": 16, "R5": 7}, "historyStr": "14/7/0/16/7" },
-    { "rank": 32, "playerName": "4-第4投者", "teamName": "千歳会B", "totalScore": 37, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 20, "R2": 7, "R3": 15, "R4": 8, "R5": 21}, "historyStr": "20/7/15/8/21" },
-    { "rank": 33, "playerName": "5-第5投者", "teamName": "千歳廻寿会", "totalScore": 34, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 7, "R2": 10, "R3": 6, "R4": 0, "R5": 17}, "historyStr": "7/10/6/0/17" },
-    { "rank": 34, "playerName": "5-第3投者", "teamName": "千歳廻寿会", "totalScore": 23, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 0, "R2": 1, "R3": 16, "R4": 6, "R5": 12}, "historyStr": "0/1,16/6/12" },
-    { "rank": 35, "playerName": "8-第2投者", "teamName": "七福会", "totalScore": 22, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 5, "R2": 6, "R3": 20, "R4": 2, "R5": 1}, "historyStr": "5/6/20/2/1" },
-    { "rank": 36, "playerName": "1-第3投者", "teamName": "成城若葉会", "totalScore": 21, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 10, "R2": 10, "R3": 21, "R4": 3, "R5": 0}, "historyStr": "10/10/21/3/0" },
-    { "rank": 37, "playerName": "8-第4投者", "teamName": "七福会", "totalScore": 19, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 0, "R2": 2, "R3": 15, "R4": 2, "R5": 9}, "historyStr": "0/2/15/2/9" },
-    { "rank": 38, "playerName": "9-第3投者", "teamName": "光寿会", "totalScore": 17, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 7, "R2": 7, "R3": 5, "R4": 8, "R5": 13}, "historyStr": "7/7/5/8/13" },
-    { "rank": 39, "playerName": "1-第4投者", "teamName": "成城若葉会", "totalScore": 16, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 11, "R2": 8, "R3": 6, "R4": 1, "R5": 5}, "historyStr": "11/8/6/1/5" },
-    { "rank": 40, "playerName": "1-第2投者", "teamName": "成城若葉会", "totalScore": 13, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 1, "R2": 4, "R3": 0, "R4": 4, "R5": 4}, "historyStr": "1/4/0/4/4" },
-    { "rank": 41, "playerName": "8-第3投者", "teamName": "七福会", "totalScore": 11, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 0, "R2": 0, "R3": 8, "R4": 8, "R5": 16}, "historyStr": "0/0/8/8/16" },
-    { "rank": 42, "playerName": "8-第1投者", "teamName": "七福会", "totalScore": 9, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 10, "R2": 14, "R3": 3, "R4": 1, "R5": 9}, "historyStr": "10/14/3/1/9" },
-    { "rank": 43, "playerName": "5-第4投者", "teamName": "千歳廻寿会", "totalScore": 7, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 0, "R2": 0, "R3": 1, "R4": 7, "R5": 8}, "historyStr": "0/0/1/7/8" },
-    { "rank": 44, "playerName": "2-第3投者", "teamName": "日の丸会", "totalScore": 3, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 0, "R2": 0, "R3": 9, "R4": 0, "R5": 0}, "historyStr": "0/0/9/0/0" },
-    { "rank": 45, "playerName": "2-第4投者", "teamName": "日の丸会", "totalScore": 1, "gameCount": 5, "scoresHistory":, "roundDetails": {"R1": 6, "R2": 9, "R3": 13, "R4": 2, "R5": 7}, "historyStr": "6/9/13/2/7" }]};
-
-
- let currentTab = "team";
- const slashChar = String.fromCharCode(47);
  function switchTab(tabType) {
-   currentTab = tabType;
-   const btnTeam = document.getElementById("tab-team");
-   const btnPlayer = document.getElementById("tab-player");
-   const panelTeam = document.getElementById("team-panel");
-   const panelPlayer = document.getElementById("player-panel");
+   const teamPanel = document.getElementById('team-panel');
+   const playerPanel = document.getElementById('player-panel');
+   const btns = document.querySelectorAll('.tab-btn');
    
-   if (tabType === "team") {
-     btnTeam.classList.add("active");
-     btnPlayer.classList.remove("active");
-     panelTeam.classList.add("active");
-     panelPlayer.classList.remove("active");
+   if (tabType === 'team') {
+     teamPanel.classList.add('active');
+     playerPanel.classList.remove('active');
+     btns[0].classList.add('active');
+     btns[1].classList.remove('active');
    } else {
-     btnTeam.classList.remove("active");
-     btnPlayer.classList.add("active");
-     panelTeam.className = "content-panel";
-     panelPlayer.className = "content-panel active";
-   }
-   renderData(cachedData);
- }
-
- function renderData(data) {
-   if (currentTab === "team") {
-     renderTeamRanking(data.teamRankings || []);
-   } else {
-     renderPlayerRanking(data.playerRankings || []);
+     teamPanel.classList.remove('active');
+     playerPanel.classList.add('active');
+     btns[0].classList.remove('active');
+     btns[1].classList.add('active');
    }
  }
- function renderTeamRanking(rankings) {
-   const chartContainer = document.getElementById("team-chart-container");
-   const listContainer = document.getElementById("team-list-container");
-   chartContainer.innerHTML = "";
-   listContainer.innerHTML = "";
-   
-   if (!rankings || rankings.length === 0) {
-     listContainer.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>記録がありません。</p>";
-     chartContainer.style.display = "none";
-     return;
-   }
-   
-   chartContainer.style.display = "block";
-   chartContainer.innerHTML = `<div class="chart-title"> チーム総得点 最終結果</div>`; 
-   
-   const maxTeamScore = Math.max(...rankings.map(t => t.totalScore || 1));
-   let maxRound = cachedData.maxRound || 5;
-   rankings.forEach(item => {
-     let barSegmentsHtml = "";
-     if (!item.roundDetails) item.roundDetails = {};
-     
-     for (let r = 1; r <= maxRound; r++) {
-       const rScore = item.roundDetails[`R${r}`] || 0;
-       if (rScore > 0 && item.totalScore > 0) {
-         const percentInTeam = (rScore / item.totalScore) * 100;
-         const colorClass = r === 1 ? 'r-color-1' : r === 2 ? 'r-color-2' : r === 3 ? 'r-color-3' : r === 4 ? 'r-color-4' : r === 5 ? 'r-color-5' : r === 6 ? 'r-color-6' : 'r-color-default';
-         barSegmentsHtml += `<div class="bar-segment ${colorClass}" style="width: ${percentInTeam}%" title="R${r}: ${rScore}点"></div>`;
-       }
-     }
-     const containerWidthPercent = (item.totalScore / maxTeamScore) * 100;
-     const displayTeamName = item.teamName || (item.teamNo ? "チーム" + item.teamNo : '不明チーム');
-     
-     const chartRow = document.createElement("div");
-     chartRow.className = "chart-row";
-     chartRow.innerHTML = `
-       <div class="chart-axis-label">${displayTeamName}</div>
-       <div class="chart-bar-flex-group">
-         <div class="chart-bar-area">
-           <div class="stacked-bar-container" style="width: ${containerWidthPercent}%; display: flex;">
-             ${barSegmentsHtml || '<div style="color: #444444; font-size: 0.95rem; font-weight: 900; padding-left: 8px; line-height: 28px;">未投球</div>'}
-           </div>
-         </div>
-         <div class="chart-row-score">${item.totalScore || 0}点</div>
-       </div>
-     `;
-     chartContainer.appendChild(chartRow);
-   });
-    rankings.forEach(item => {
-     const card = document.createElement("div");
-     card.className = "rank-card";
-     
-     let playerMapInTeam = {};
-     let hasData = false;
-     if (item.memberHistory && typeof item.memberHistory === "object") {
-       Object.keys(item.memberHistory).sort().forEach(rKey => {
-         const rawString = item.memberHistory[rKey];
-         if (!rawString) return;
-         const players = rawString.split(slashChar).map(p => p.trim());
-         players.forEach(player => {
-           if (!player) return;
-           const match = player.match(/^(.+?)\((.+?)\)$/);
-           if (match && match.length > 2) {
-             const pName = match[1].trim(); 
-             const pScore = parseInt(match[2], 10) || 0; 
-             if (!playerMapInTeam[pName]) {
-               playerMapInTeam[pName] = { scores: [], total: 0, count: 0 };
-             }
-             playerMapInTeam[pName].scores.push(pScore);
-             playerMapInTeam[pName].total += pScore;
-             playerMapInTeam[pName].count += 1;
-           }
-         });
-       });
-     }
-
-     let originalHistoryHtml = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">';
-     Object.keys(playerMapInTeam).forEach(pName => {
-       hasData = true;
-       const pData = playerMapInTeam[pName];
-       originalHistoryHtml += `
-         <div class="player-row-in-team" style="margin-bottom: 8px; padding: 4px 0; border-bottom: 1px dotted #ccc;">
-           <div style="font-size: 1.2rem; font-weight: 900; color: #111; margin-bottom: 2px;">${pName}</div>
-           <div style="font-size: 1.1rem; color: #111; font-weight: bold; line-height: 1.4;">
-             <span style="color: #444; font-size: 1rem; font-weight: 900; margin-right: 6px; background: #eee; padding: 1px 5px; border-radius: 3px;">履歴</span>
-             <span style="font-size: 1.15rem; color: #000; letter-spacing: 0.5px;">${pData.scores.join(" " + slashChar + " ")}</span>
-             <span style="color: #222; font-size: 1rem; font-weight: 900; margin-left: 8px; display: inline-block;">(${pData.count}試合 / 計 <span style="color: #008f00; font-size: 1.1rem;">${pData.total}点</span>)</span>
-           </div>
-         </div>`;
-     });
-     originalHistoryHtml += '</div>';
-     if (!hasData) originalHistoryHtml = "<div style='padding:8px; font-weight:bold; color:#666;'>記録がありません。</div>";
-
-     let compactTableHtml = `
-       <div class="sm-table-container" style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 12px;">
-         <div style="font-size: 1.1rem; font-weight: 900; color: #111; margin-bottom: 6px;"> チーム回戦別履歴確認表</div>
-         <table class="sm-table">
-           <thead>
-             <tr><th style="width: 25%;">チーム</th><th style="width: 10%;">回</th><th style="width: 20%;">合計</th><th style="width: 45%;">5人の内訳</th></tr>
-           </thead>
-           <tbody>
-     `;
-
-     if (item.memberHistory && typeof item.memberHistory === "object") {
-       for (let r = 1; r <= maxRound; r++) {
-         const roundKey = `R${r}`;
-         const roundScore = item.roundDetails[roundKey] !== undefined ? item.roundDetails[roundKey] : "-";
-         const rawString = item.memberHistory[roundKey] || "";
-         let scoreOnlyLine = "-";
-         if (rawString) {
-           const scores = [];
-           const regex = new RegExp("\\(([^)]+)\\)", "g");
-           let match;
-           while ((match = regex.exec(rawString)) !== null) {
-             if (match && match.length > 1) scores.push(match[1].trim());
-           }
-           if (scores.length > 0) scoreOnlyLine = scores.join(slashChar);
-         }
-         compactTableHtml += `
-           <tr>
-             <td class="col-bold" style="text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:70px;">${item.teamName || '不明'}</td>
-             <td>${r}</td>
-             <td class="col-score">${roundScore}${typeof roundScore === 'number' ? '点' : ''}</td>
-             <td class="col-nums" style="white-space: nowrap;">${scoreOnlyLine}</td>
-           </tr>`;
-       }
-     }
-     compactTableHtml += `</tbody></table></div>`;
-
-     card.innerHTML = `
-       <div class="card-main-content">
-         <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
-         <div class="info-box"><div class="name-container"><span class="team-tag">${item.teamName || '不明'}</span></div></div>
-         <div class="score-box"><span class="score-num">${item.totalScore || 0}</span><span class="score-unit">点</span></div>
-       </div>
-       <div class="member-history-panel">
-         <div style="font-size: 1.1rem; font-weight: 900; color: #000; margin-bottom: 8px; border-left: 5px solid #008f00; padding-left: 8px;"> チーム内個人の総合成績</div>
-         ${originalHistoryHtml}
-         ${compactTableHtml}
-       </div>
-     `;
-     card.addEventListener("click", () => {
-       const panel = card.querySelector(".member-history-panel");
-       if (panel) panel.classList.toggle("open");
-     });
-     listContainer.appendChild(card);
-   });
- }
-
- function renderPlayerRanking(rankings) {
-   const panel = document.getElementById("player-panel");
-   panel.innerHTML = "";
-   if (rankings.length === 0) {
-     panel.innerHTML = "<p style='text-align:center; padding:20px; color:#888;'>記録がありません。</p>";
-     return;
-   }
-   rankings.forEach(item => {
-     const card = document.createElement("div");
-     card.className = "rank-card";
-     card.style.cursor = "default";
-     const displayTeamName = item.teamName || (item.teamNo ? "チーム" + item.teamNo : '不明');
-     let cleanHistory = item.historyStr || '-';
-     if (typeof cleanHistory === "string") {
-       const spaceRegex = new RegExp("\\s*\\x2f\\s*", "g");
-       cleanHistory = cleanHistory.replace(spaceRegex, slashChar);
-     }
-     card.innerHTML = `
-       <div class="card-main-content">
-         <div class="rank-num ${getRankClass(item.rank)}">${getRankFormat(item.rank)}</div>
-         <div class="info-box">
-           <div class="name-container">
-             <span class="name-main">${item.playerName || '不明'}</span>
-             <span class="team-tag">${displayTeamName}</span>
-           </div>
-           <div style="font-size: 1.05rem; color: #444; font-weight: 900; margin-top: 4px; margin-bottom: 2px; line-height: 1;">
-             履歴 (${item.gameCount || 0} 試合)
-           </div>
-           <div style="font-size: 1.25rem; color: #000; font-weight: 900; letter-spacing: -0.5px; line-height: 1.2; white-space: nowrap;">
-             ${cleanHistory}
-           </div>
-         </div>
-         <div class="score-box">
-           <span class="score-num">${item.totalScore || 0}</span>
-           <span class="score-unit">点</span>
-         </div>
-       </div>
-     `;
-     panel.appendChild(card);
-   });
- }
-
- function getRankClass(rank) {
-   if (rank === 1) return "rank-1"; 
-   if (rank === 2) return "rank-2"; 
-   if (rank === 3) return "rank-3"; 
-   return "";
- }
-
- function getRankFormat(rank) {
-   if (rank === 1) return "🥇"; 
-   if (rank === 2) return "🥈"; 
-   if (rank === 3) return "🥉"; 
-   return `${rank}位`;
- }
-
- function initApp() {
-   document.getElementById("tab-team").addEventListener("click", () => switchTab("team"));
-   document.getElementById("tab-player").addEventListener("click", () => switchTab("player"));
-   renderData(cachedData);
- }
- document.addEventListener("DOMContentLoaded", initApp);
  </script>
 </body>
 </html>
