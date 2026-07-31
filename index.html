@@ -12,94 +12,29 @@
  --card-bg: #ffffff; 
  }
  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; }
- 
- body { 
- background-color: var(--bg-color); 
- color: var(--secondary-color); 
- padding-bottom: 40px; 
- font-size: 1.15rem; 
- line-height: 1.5;
- }
+ body { background-color: var(--bg-color); color: var(--secondary-color); padding-bottom: 40px; font-size: 1.15rem; line-height: 1.5; }
  header { background: linear-gradient(135deg, var(--primary-color), #007700); color: white; padding: 18px 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.15); }
- h1 { font-size: 1.6rem; font-weight: 900; margin-bottom: 4px; }
- .sub-header-text { font-size: 1.0rem; font-weight: bold; color: #e0f2f1; opacity: 0.9; }
- 
- .tabs { 
- display: flex; 
- background: white; 
- margin: 15px 0; 
- border-radius: 0; 
- overflow: hidden; 
- box-shadow: 0 3px 6px rgba(0,0,0,0.1); 
- width: 100%; 
- border-left: none;
- border-right: none;
- border-top: 1px solid #ccc;
- border-bottom: 1px solid #ccc;
- }
+ h1 { font-size: 1.6rem; font-weight: 900; margin-bottom: 0px; }
+ .tabs { display: flex; background: white; margin: 15px 0; border-radius: 0; overflow: hidden; box-shadow: 0 3px 6px rgba(0,0,0,0.1); width: 100%; border: none; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; }
  .tab-btn { flex: 1; width: 50%; padding: 16px 10px; text-align: center; background: none; border: none; font-size: 1.25rem; font-weight: 900; color: #444; cursor: pointer; display: block;}
  .tab-btn.active { background-color: var(--primary-color) !important; color: white !important;}
- 
  .container { padding: 0; }
  .content-panel { display: none; }
  .content-panel.active { display: block; }
- .rank-card { 
- background: var(--card-bg); 
- border-radius: 0; 
- padding: 18px 15px; 
- margin-bottom: 10px; 
- border: none; 
- border-bottom: 1px solid #e5e7eb; 
- box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); 
- width: 100%;
- }
+ .rank-card { background: var(--card-bg); border-radius: 0; padding: 18px 15px; margin-bottom: 10px; border: none; border-bottom: 1px solid #e5e7eb; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); width: 100%; }
  .card-main-content { display: flex; align-items: center; }
- 
- .rank-num { 
- font-size: 1.6rem; 
- font-weight: 900; 
- min-width: 55px; 
- max-width: 55px;
- height: 55px;
- line-height: 51px; 
- text-align: center; 
- margin-right: 15px; 
- color: #333; 
- background: #e6e6e6; 
- border-radius: 50%;
- border: 2px solid #ccc;
- }
-.rank-1 { background: linear-gradient(135deg, #ffd700, #ffa500); color: #000000; font-size: 2.1rem; border: 3px solid #b58600; box-shadow: inset 0 2px 4px rgba(255,255,255,0.4); }
-.rank-2 { background: linear-gradient(135deg, #f0f0f0, #b0b0b0); color: #000000; border: 3px solid #777;}
-.rank-3 { background: linear-gradient(135deg, #f4a460, #cd7f32); color: #000000; border: 3px solid #8b4513;}
+ .rank-num { font-size: 1.6rem; font-weight: 900; min-width: 55px; max-width: 55px; height: 55px; line-height: 51px; text-align: center; margin-right: 15px; color: #333; background: #e6e6e6; border-radius: 50%; border: 2px solid #ccc; }
+ .rank-1 { background: linear-gradient(135deg, #ffd700, #ffa500); color: #000000; font-size: 2.1rem; border: 3px solid #b58600; box-shadow: inset 0 2px 4px rgba(255,255,255,0.4); }
+ .rank-2 { background: linear-gradient(135deg, #f0f0f0, #b0b0b0); color: #000000; border: 3px solid #777;}
+ .rank-3 { background: linear-gradient(135deg, #f4a460, #cd7f32); color: #000000; border: 3px solid #8b4513;}
  .info-box { flex: 1; }
  .name-main { font-size: 1.4rem; font-weight: 900; color: #000000; line-height: 1.4; }
  .name-container { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
- 
- .team-tag { 
- font-size: 1.05rem;
- color: #000000 !important; 
- background-color: #ffe082 !important; 
- padding: 4px 14px; 
- border-radius: 20px; 
- font-weight: 900 !important; 
- border: 2px solid #000000; 
- }
- 
+ .team-tag { font-size: 1.05rem; color: #000000 !important; background-color: #ffe082 !important; padding: 4px 14px; border-radius: 20px; font-weight: 900 !important; border: 2px solid #000000; }
  .score-box { text-align: right; min-width: 85px; }
  .score-num { font-size: 1.8rem; font-weight: 900; color: var(--primary-color); } 
  .score-unit { font-size: 1rem; font-weight: bold; color: #333; margin-left: 1px; }
-
- .chart-card { 
- background: var(--card-bg); 
- border-radius: 0; 
- padding: 18px 15px; 
- margin-bottom: 15px; 
- box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
- border: none;
- border-bottom: 1px solid #e5e7eb;
- width: 100%;
- }
+ .chart-card { background: var(--card-bg); border-radius: 0; padding: 18px 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: none; border-bottom: 1px solid #e5e7eb; width: 100%; }
  .chart-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 14px; color: #111; border-left: 6px solid var(--primary-color); padding-left: 10px; }
  .chart-row { display: block; margin-bottom: 12px; width: 100%; }
  .chart-axis-label { width: 100%; font-weight: 900; font-size: 1.0rem; color: #000000; text-align: left; margin-bottom: 2px; }
@@ -108,7 +43,6 @@
  .stacked-bar-container { background: #dddddd; border-radius: 4px; overflow: hidden; display: flex; height: 24px; }
  .bar-segment { height: 100%; }
  .chart-row-score { min-width: 70px; text-align: right; padding-left: 6px; font-weight: 900; font-size: 1.3rem; color: var(--primary-color); }
- 
  .r-color-1 { background-color: #00BFFF; } 
  .r-color-2 { background-color: #FF3AD8; } 
  .r-color-3 { background-color: #29FF14; } 
@@ -118,7 +52,7 @@
 </head>
 <body>
  <header>
-   <h1>第11回 砧高協輪投げ大会</h1>
+    <h1>第11回 砧高協輪投げ大会</h1>
    <div class="sub-header-text">開催日: 2026年7月13日 (最終結果)</div>
  </header>
  <div class="tabs">
@@ -168,55 +102,34 @@
        </div>
      </div>
    </div>
-   <!-- 個人順位パネル -->
+      <!-- 個人順位パネル -->
    <div id="player-panel" class="content-panel">
      <script>
        const playerPanelHtml = `
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num rank-1">🥇</div><div class="info-box"><div class="name-container"><span class="name-main">7-第4投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 17 / 32 / 27 / 21 / 29</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">126</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num rank-2">🥈</div><div class="info-box"><div class="name-container"><span class="name-main">3-第1投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 18 / 20 / 27 / 29 / 21</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">115</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num rank-3">🥉</div><div class="info-box"><div class="name-container"><span class="name-main">4-第2投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 17 / 16 / 31 / 35 / 11</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">110</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">4位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第4投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 16 / 13 / 14 / 35 / 31</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">109</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">5位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第3投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 8 / 19 / 22 / 32 / 18</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">99</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">6位</div><div class="info-box"><div class="name-container"><span class="name-main">7-第1投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 10 / 15 / 5 / 30 / 35</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">95</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">7位</div><div class="info-box"><div class="name-container"><span class="name-main">5-第1投者</span><span class="team-tag">千歳廻寿会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 34 / 20 / 20 / 14 / 5</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">93</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">8位</div><div class="info-box"><div class="name-container"><span class="name-main">7-第3投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 34 / 23 / 9 / 13 / 13</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">92</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">9位</div><div class="info-box"><div class="name-container"><span class="name-main">2-第5投者</span><span class="team-tag">日の丸会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 32 / 28 / 8 / 0 / 23</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">91</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">10位</div><div class="info-box"><div class="name-container"><span class="name-main">1-第5投者</span><span class="team-tag">成城若葉会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 17 / 24 / 20 / 13 / 11</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">85</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">11位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第5投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 27 / 3 / 14 / 20 / 19</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">83</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">12位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第2投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 16 / 7 / 10 / 35 / 15</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">83</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">13位</div><div class="info-box"><div class="name-container"><span class="name-main">4-第5投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 24 / 18 / 25 / 0 / 15</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">82</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">14位</div><div class="info-box"><div class="name-container"><span class="name-main">7-第2投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 19 / 8 / 9 / 22 / 6</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">80</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">15位</div><div class="info-box"><div class="name-container"><span class="name-main">4-第3投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 9 / 16 / 20 / 17 / 8</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">76</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">16位</div><div class="info-box"><div class="name-container"><span class="name-main">4-第1投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 5 / 10 / 4 / 6 / 9</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">70</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">17位</div><div class="info-box"><div class="name-container"><span class="name-main">9-第5投者</span><span class="team-tag">光寿会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 21 / 2 / 8 / 1 / 9</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">68</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">18位</div><div class="info-box"><div class="name-container"><span class="name-main">9-第1投者</span><span class="team-tag">光寿会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 15 / 9 / 11 / 24 / 13</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">64</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">19位</div><div class="info-box"><div class="name-container"><span class="name-main">1-第1投者</span><span class="team-tag">成城若葉会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 9 / 25 / 15 / 20 / 1</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">61</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">20位</div><div class="info-box"><div class="name-container"><span class="name-main">5-第2投者</span><span class="team-tag">千歳廻寿会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 17 / 11 / 28 / 12 / 13</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">61</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">21位</div><div class="info-box"><div class="name-container"><span class="name-main">9-第2投者</span><span class="team-tag">光寿会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 11 / 14 / 12 / 18 / 20</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">58</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">22位</div><div class="info-box"><div class="name-container"><span class="name-main">8-第5投者</span><span class="team-tag">七福会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 9 / 25 / 7 / 12 / 19</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">57</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">23位</div><div class="info-box"><div class="name-container"><span class="name-main">2-第2投者</span><span class="team-tag">日の丸会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 17 / 0 / 7 / 1 / 0</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">56</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">24位</div><div class="info-box"><div class="name-container"><span class="name-main">7-第5投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 15 / 30 / 10 / 0 / 21</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">56</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">25位</div><div class="info-box"><div class="name-container"><span class="name-main">6-第1投者</span><span class="team-tag">上北沢幸友会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 12 / 20 / 5 / 24 / 11</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">54</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">26位</div><div class="info-box"><div class="name-container"><span class="name-main">6-第2投者</span><span class="team-tag">上北沢幸友会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 7 / 0 / 24 / 1 / 12</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">53</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">27位</div><div class="info-box"><div class="name-container"><span class="name-main">2-第1投者</span><span class="team-tag">日の丸会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 4 / 17 / 9 / 10 / 13</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">50</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">28位</div><div class="info-box"><div class="name-container"><span class="name-main">6-第5投者</span><span class="team-tag">上北沢幸友会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 13 / 6 / 17 / 1 / 7</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">48</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">29位</div><div class="info-box"><div class="name-container"><span class="name-main">6-第3投者</span><span class="team-tag">上北沢幸友会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 7 / 22 / 6 / 12 / 2</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">47</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">30位</div><div class="info-box"><div class="name-container"><span class="name-main">6-第4投者</span><span class="team-tag">上北沢幸友会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 4 / 9 / 7 / 13 / 6</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">46</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">31位</div><div class="info-box"><div class="name-container"><span class="name-main">9-第4投者</span><span class="team-tag">光寿会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 14 / 7 / 0 / 16 / 7</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">44</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">32位</div><div class="info-box"><div class="name-container"><span class="name-main">4-第4投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 20 / 7 / 15 / 8 / 21</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">37</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">33位</div><div class="info-box"><div class="name-container"><span class="name-main">5-第5投者</span><span class="team-tag">千歳廻寿会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 7 / 10 / 6 / 0 / 17</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">34</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">34位</div><div class="info-box"><div class="name-container"><span class="name-main">5-第3投者</span><span class="team-tag">千歳廻寿会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 0 / 1 / 16 / 6 / 12</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">23</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">35位</div><div class="info-box"><div class="name-container"><span class="name-main">8-第2投者</span><span class="team-tag">七福会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 5 / 6 / 20 / 2 / 1</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">22</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">36位</div><div class="info-box"><div class="name-container"><span class="name-main">1-第3投者</span><span class="team-tag">成城若葉会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 10 / 10 / 21 / 3 / 0</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">21</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">37位</div><div class="info-box"><div class="name-container"><span class="name-main">8-第4投者</span><span class="team-tag">七福会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 0 / 2 / 15 / 2 / 9</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">19</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">38位</div><div class="info-box"><div class="name-container"><span class="name-main">9-第3投者</span><span class="team-tag">光寿会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 7 / 7 / 5 / 8 / 13</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">17</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">39位</div><div class="info-box"><div class="name-container"><span class="name-main">1-第4投者</span><span class="team-tag">成城若葉会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 11 / 8 / 6 / 1 / 5</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">16</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">40位</div><div class="info-box"><div class="name-container"><span class="name-main">1-第2投者</span><span class="team-tag">成城若葉会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 1 / 4 / 0 / 4 / 4</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">13</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">41位</div><div class="info-box"><div class="name-container"><span class="name-main">8-第3投者</span><span class="team-tag">七福会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 0 / 0 / 8 / 8 / 16</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">11</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">42位</div><div class="info-box"><div class="name-container"><span class="name-main">8-第1投者</span><span class="team-tag">七福会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 10 / 14 / 3 / 1 / 9</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">9</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">43位</div><div class="info-box"><div class="name-container"><span class="name-main">5-第4投者</span><span class="team-tag">千歳廻寿会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 0 / 0 / 1 / 7 / 8</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">7</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">44位</div><div class="info-box"><div class="name-container"><span class="name-main">2-第3投者</span><span class="team-tag">日の丸会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 0 / 0 / 9 / 0 / 0</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">3</span><span class="score-unit">点</span></div></div></div>
-       <div class="rank-card"><div class="card-main-content"><div class="rank-num">45位</div><div class="info-box"><div class="name-container"><span class="name-main">2-第4投者</span><span class="team-tag">日の丸会</span></div><div style="font-size:1.05rem;color:#000;font-weight:900;">履歴: 6 / 9 / 13 / 2 / 7</div><div style="font-size:0.9rem;color:#555;">(5試合)</div></div><div class="score-box"><span class="score-num">1</span><span class="score-unit">点</span></div></div></div>\`;
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num rank-1">🥇</div><div class="info-box"><div class="name-container"><span class="name-main">7-第4投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 17 / 32 / 27 / 21 / 29 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">126</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num rank-2">🥈</div><div class="info-box"><div class="name-container"><span class="name-main">3-第1投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 18 / 20 / 27 / 29 / 21 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">115</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num rank-3">🥉</div><div class="info-box"><div class="name-container"><span class="name-main">4-第2投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:0.95rem;color:#555;">履歴: 17 / 16 / 31 / 35 / 11 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">110</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">4位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第4投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 16 / 13 / 14 / 35 / 31 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">109</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">5位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第3投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 8 / 19 / 22 / 32 / 18 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">99</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">6位</div><div class="info-box"><div class="name-container"><span class="name-main">7-第1投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 10 / 15 / 5 / 30 / 35 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">95</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">7位</div><div class="info-box"><div class="name-container"><span class="name-main">5-第1投者</span><span class="team-tag">千歳廻寿会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 34 / 20 / 20 / 14 / 5 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">93</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">8位</div><div class="info-box"><div class="name-container"><span class="name-main">7-第3投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 34 / 23 / 9 / 13 / 13 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">92</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">9位</div><div class="info-box"><div class="name-container"><span class="name-main">2-第5投者</span><span class="team-tag">日の丸会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 32 / 28 / 8 / 0 / 23 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">91</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">10位</div><div class="info-box"><div class="name-container"><span class="name-main">1-第5投者</span><span class="team-tag">成城若葉会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 17 / 24 / 20 / 13 / 11 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">85</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">11位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第5投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 27 / 3 / 14 / 20 / 19 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">83</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">12位</div><div class="info-box"><div class="name-container"><span class="name-main">3-第2投者</span><span class="team-tag">千歳会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 16 / 7 / 10 / 35 / 15 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">83</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">13位</div><div class="info-box"><div class="name-container"><span class="name-main">4-第5投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:0.95rem;color:#555;">履歴: 24 / 18 / 25 / 0 / 15 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">82</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">14位</div><div class="info-box"><div class="name-container"><span class="name-main">7-第2投者</span><span class="team-tag">みずき会A</span></div><div style="font-size:0.95rem;color:#555;">履歴: 19 / 8 / 9 / 22 / 6 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">80</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">15位</div><div class="info-box"><div class="name-container"><span class="name-main">4-第3投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:0.95rem;color:#555;">履歴: 9 / 16 / 20 / 17 / 8 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">76</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">16位</div><div class="info-box"><div class="name-container"><span class="name-main">4-第1投者</span><span class="team-tag">千歳会B</span></div><div style="font-size:0.95rem;color:#555;">履歴: 5 / 10 / 4 / 6 / 9 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">70</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">17位</div><div class="info-box"><div class="name-container"><span class="name-main">9-第5投者</span><span class="team-tag">光寿会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 21 / 2 / 8 / 1 / 9 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">68</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">18位</div><div class="info-box"><div class="name-container"><span class="name-main">9-第1投者</span><span class="team-tag">光寿会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 15 / 9 / 11 / 24 / 13 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">64</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">19位</div><div class="info-box"><div class="name-container"><span class="name-main">1-第1投者</span><span class="team-tag">成城若葉会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 9 / 25 / 15 / 20 / 1 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">61</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">20位</div><div class="info-box"><div class="name-container"><span class="name-main">5-第2投者</span><span class="team-tag">千歳廻寿会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 17 / 11 / 28 / 12 / 13 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">61</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">21位</div><div class="info-box"><div class="name-container"><span class="name-main">9-第2投者</span><span class="team-tag">光寿会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 11 / 14 / 12 / 18 / 20 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">58</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">22位</div><div class="info-box"><div class="name-container"><span class="name-main">8-第5投者</span><span class="team-tag">七福会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 9 / 25 / 7 / 12 / 19 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">57</span><span class="score-unit">点</span></div></div></div>
+       <div class="rank-card"><div class="card-main-content"><div class="rank-num">23位</div><div class="info-box"><div class="name-container"><span class="name-main">2-第2投者</span><span class="team-tag">日の丸会</span></div><div style="font-size:0.95rem;color:#555;">履歴: 17 / 0 / 7 / 1 / 0 </div><div style="font-size:0.9rem;color:#555;margin-top:2px;">(5試合)</div></div><div class="score-box"><span class="score-num">56</span><span class="score-unit">点</span></div></div></div>
+`;
        document.getElementById('player-panel').innerHTML = playerPanelHtml;
      </script>
    </div>
